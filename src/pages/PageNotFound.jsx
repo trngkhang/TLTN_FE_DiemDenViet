@@ -1,6 +1,6 @@
 export default function PageNotFound() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center ">
       <img
         src="https://cdn.prod.website-files.com/62fec8041edae129b05e72ac/63a162b657a05c31e92ebbd5_Blog-HeroImage-404-Page-Error-1600x900px.png"
         alt="Page not found illustration"
