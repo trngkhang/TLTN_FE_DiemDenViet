@@ -1,7 +1,26 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import PageNotFound from "./pages/PageNotFound";
+import Footer from "./components/Footer";
 
 function App() {
-  return <h1 className="text-3xl font-bold underline">Điểm Đến Việt</h1>;
+  return (
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </div>
+        <Footer />
+      </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;
