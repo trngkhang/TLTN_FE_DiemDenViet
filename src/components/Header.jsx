@@ -1,15 +1,39 @@
 import { Button, Navbar, Drawer, Sidebar } from "flowbite-react";
 import Brand from "./Brand";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false); // Set default to false
+  const [isScrolled, setIsScrolled] = useState(false);
   const path = useLocation().pathname;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <>
-      <Navbar fluid rounded>
+      <Navbar
+        fluid
+        rounded
+        className={`px-3 shadow-md top-0 w-full fixed content-center h-16 z-50 bg-inherit ${
+          isScrolled && "bg-white"
+        }`}
+      >
         <Brand />
         <div className="flex md:order-2">
           <Button>Đăng nhập</Button>
