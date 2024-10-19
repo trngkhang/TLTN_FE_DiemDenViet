@@ -10,14 +10,30 @@ import Brand from "./Brand";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import envVar from "../utils/envVar";
+import { logout } from "../redux/slice/userSlice";
 
 export default function Header() {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false); // Set default to false
   const [isScrolled, setIsScrolled] = useState(false);
   const path = useLocation().pathname;
   const dispatch = useDispatch();
-
   const { user, isAuthenticated } = useSelector((state) => state.user);
+
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch(`${envVar.api_url}/auth/signout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        return dispatch(logout());
+      }
+      console.log(await res.json().message);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,14 +53,12 @@ export default function Header() {
   }, []);
 
   return (
-    <>
-      <Navbar
-        fluid
-        rounded
-        className={`px-3 shadow-md top-0 w-full fixed content-center h-16 z-50 bg-inherit ${
-          isScrolled && "bg-white"
-        }`}
-      >
+    <div
+      className={`px-3 shadow-md top-0 w-full fixed content-center h-16 z-50 bg-inherit ${
+        isScrolled && "bg-white"
+      }`}
+    >
+      <Navbar fluid rounded className="bg-inherit max-w-6xl mx-auto">
         <Brand />
         <div className="flex md:order-2">
           {isAuthenticated ? (
@@ -66,7 +80,7 @@ export default function Header() {
                 </Link>
               )}
               <Dropdown.Divider />
-              <button type="button" className="w-full">
+              <button type="button" className="w-full" onClick={handleSignOut}>
                 <Dropdown.Item as="div">Đăng xuất</Dropdown.Item>
               </button>
             </Dropdown>
@@ -75,20 +89,23 @@ export default function Header() {
               <Button>Đăng nhập</Button>
             </Link>
           )}
-          <Navbar.Toggle onClick={() => setIsOpenDrawer(true)} />
+          <Navbar.Toggle
+            onClick={() => setIsOpenDrawer(true)}
+            className="text-gray-800"
+          />
         </div>
         <Navbar.Collapse>
-          <Link to="/">
+          <Link to="/" className="text-lg font-semibold">
             <Navbar.Link active={path === "/"} as="div">
-              Home
+              Trang chủ
             </Navbar.Link>
           </Link>
-          <Link to="/destination">
+          <Link to="/destination" className="text-lg font-semibold">
             <Navbar.Link active={path === "/destination"} as="div">
               Tra cứu điểm đến
             </Navbar.Link>
           </Link>
-          <Link to="/generate-trip">
+          <Link to="/generate-trip" className="text-lg font-semibold">
             <Navbar.Link active={path === "/generate-trip"} as="div">
               AI tư vấn
             </Navbar.Link>
@@ -102,12 +119,11 @@ export default function Header() {
         setIsOpenDrawer={setIsOpenDrawer}
         path={path}
       />
-    </>
+    </div>
   );
 }
 
 const HeaderDrawer = ({ isOpenDrawer, setIsOpenDrawer, path }) => {
-  // Destructure props
   const handleClose = () => setIsOpenDrawer(false);
 
   return (
