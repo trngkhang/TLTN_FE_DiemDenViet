@@ -1,12 +1,23 @@
-import { Button, Navbar, Drawer, Sidebar } from "flowbite-react";
+import {
+  Button,
+  Navbar,
+  Drawer,
+  Sidebar,
+  Dropdown,
+  Avatar,
+} from "flowbite-react";
 import Brand from "./Brand";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Header() {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false); // Set default to false
   const [isScrolled, setIsScrolled] = useState(false);
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
+
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,9 +47,34 @@ export default function Header() {
       >
         <Brand />
         <div className="flex md:order-2">
-          <Link to="/signin">
-            <Button>Đăng nhập</Button>
-          </Link>
+          {isAuthenticated ? (
+            <Dropdown
+              arrowIcon={false}
+              inline
+              label={<Avatar alt="User settings" img={user.avatar} rounded />}
+            >
+              <Dropdown.Header>
+                <span className="block text-sm font-semibold">{`${user.name}`}</span>
+                <span className="block text-sm font-semibold">{`@${user.username}`}</span>
+              </Dropdown.Header>
+              <Link to="/profile">
+                <Dropdown.Item>Tài khoản</Dropdown.Item>
+              </Link>
+              {user.isAdmin && (
+                <Link to="/dashboard">
+                  <Dropdown.Item>Quản lý</Dropdown.Item>
+                </Link>
+              )}
+              <Dropdown.Divider />
+              <button type="button" className="w-full">
+                <Dropdown.Item as="div">Đăng xuất</Dropdown.Item>
+              </button>
+            </Dropdown>
+          ) : (
+            <Link to="/signin">
+              <Button>Đăng nhập</Button>
+            </Link>
+          )}
           <Navbar.Toggle onClick={() => setIsOpenDrawer(true)} />
         </div>
         <Navbar.Collapse>

@@ -2,6 +2,8 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import envVar from "../utils/envVar";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slice/userSlice";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +14,7 @@ export default function SignIn() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispath = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -40,6 +43,7 @@ export default function SignIn() {
       }
       if (res.ok) {
         setLoading(false);
+        dispath(login(data));
         navigate("/");
       }
     } catch (error) {

@@ -6,8 +6,22 @@ import PageNotFound from "./pages/PageNotFound";
 import Footer from "./components/Footer";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getUserByToken } from "./utils/auth";
+import { setUser } from "./redux/slice/userSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userFromToken = await getUserByToken();
+      dispatch(setUser(userFromToken));
+    };
+
+    fetchUser();
+  }, [dispatch]);
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen">

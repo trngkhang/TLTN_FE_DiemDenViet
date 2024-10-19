@@ -2,6 +2,8 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import envVar from "../utils/envVar";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slice/userSlice";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,7 @@ export default function SignUp() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispath = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -50,6 +53,7 @@ export default function SignUp() {
       }
       if (res.ok) {
         setLoading(false);
+        dispath(login(data));
         navigate("/");
       }
     } catch (error) {
@@ -136,9 +140,9 @@ export default function SignUp() {
           )}
         </Button>
         <span className="text-right">
-          Chưa có tài khoản?
+          Đã có tài khoản?
           <Link to="/signin" className="text-blue-500 hover:underline ml-1">
-            Đăng ký
+            Đăng nhập
           </Link>
         </span>
       </form>
