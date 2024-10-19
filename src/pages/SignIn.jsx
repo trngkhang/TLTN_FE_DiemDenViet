@@ -3,13 +3,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import envVar from "../utils/envVar";
 
-export default function SignUp() {
+export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name,
     username: "",
     password: "",
-    repeatPassword: "",
   });
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,22 +17,14 @@ export default function SignUp() {
     setShowPassword(!showPassword);
   };
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]:
-        e.target.id === "name" ? e.target.value : e.target.value.trim(),
-    });
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    if (formData.password !== formData.repeatPassword) {
-      setLoading(false);
-      return setError("Mật khẩu không trùng khớp.");
-    }
     try {
-      const res = await fetch(`${envVar.api_url}/auth/signup`, {
+      const res = await fetch(`${envVar.api_url}/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,27 +47,13 @@ export default function SignUp() {
       return setError(error.message);
     }
   };
-
   return (
     <div className=" justify-center">
-      <h1 className="text-center text-5xl font-bold mt-5">ĐĂNG KÝ</h1>
+      <h1 className="text-center text-5xl font-bold mt-5">ĐĂNG NHẬP</h1>
       <form
         className="flex max-w-md flex-col gap-4 mx-auto my-7"
         onSubmit={handleSubmit}
       >
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="name" value="Tên" />
-          </div>
-          <TextInput
-            id="name"
-            type="text"
-            required
-            shadow
-            onChange={handleChange}
-            value={formData.name}
-          />
-        </div>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="username" value="Tên đăng nhập" />
@@ -113,31 +89,18 @@ export default function SignUp() {
             </button>
           </div>
         </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="repeatPassword" value="Xác nhận mật khẩu" />
-          </div>
-          <TextInput
-            id="repeatPassword"
-            type="password"
-            placeholder="Nhập lại mật khẩu"
-            required
-            shadow
-            onChange={handleChange}
-            value={formData.repeatPassword}
-          />
-        </div>
+
         {error && <Alert color="failure">{error}</Alert>}
         <Button type="submit">
           {loading ? (
             <Spinner aria-label="Default status example" />
           ) : (
-            "Đăng ký"
+            "Đăng nhập"
           )}
         </Button>
         <span className="text-right">
           Chưa có tài khoản?
-          <Link to="/signin" className="text-blue-500 hover:underline ml-1">
+          <Link to="/signup" className="text-blue-500 hover:underline ml-1">
             Đăng ký
           </Link>
         </span>

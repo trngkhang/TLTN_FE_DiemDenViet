@@ -36,7 +36,9 @@ export default function Header() {
       >
         <Brand />
         <div className="flex md:order-2">
-          <Button>Đăng nhập</Button>
+          <Link to="/signin">
+            <Button>Đăng nhập</Button>
+          </Link>
           <Navbar.Toggle onClick={() => setIsOpenDrawer(true)} />
         </div>
         <Navbar.Collapse>
