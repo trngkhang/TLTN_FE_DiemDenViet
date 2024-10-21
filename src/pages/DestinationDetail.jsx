@@ -4,6 +4,7 @@ import envVar from "../utils/envVar";
 import { HiOutlineCalendar } from "react-icons/hi2";
 import { IoEyeOutline } from "react-icons/io5";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import ReviewSession from "../components/ReviewSession";
 
 export default function DestinationDetail() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function DestinationDetail() {
     };
     fetchDestination();
   }, [id]);
+
   return (
     <div className="bg-gray-100 w-full">
       <div className="max-w-5xl mx-auto bg-white p-3">
@@ -37,7 +39,9 @@ export default function DestinationDetail() {
           <Link
             to={
               "https://www.google.com/maps/search/?api=1&query=" +
-              destination.name+" "+destination.address
+              destination.name +
+              " " +
+              destination.address
             }
             target="_blank"
             className="flex flex-row items-center hover:underline-offset-2 hover:text-blue-500"
@@ -51,6 +55,7 @@ export default function DestinationDetail() {
         <div
           dangerouslySetInnerHTML={{ __html: destination.description }}
         ></div>
+        {destination._id && <ReviewSession destinationId={destination._id} />}{" "}
       </div>
     </div>
   );
