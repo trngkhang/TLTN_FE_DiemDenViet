@@ -12,6 +12,8 @@ import { getUserByToken } from "./utils/auth";
 import { setUser } from "./redux/slice/userSlice";
 import Destination from "./pages/destination";
 import DestinationDetail from "./pages/DestinationDetail";
+import Profile from "./pages/Profile";
+import PrivateRoute from "./pages/PrivateRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +38,9 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/destination" element={<Destination />} />
             <Route path="/destination/:id" element={<DestinationDetail />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
 
             <Route path="*" element={<PageNotFound />} />
           </Routes>
