@@ -54,7 +54,7 @@ export default function Header() {
 
   return (
     <div
-      className={`px-3 shadow-md top-0 w-full fixed content-center h-16 z-50 bg-inherit ${
+      className={`px-3 shadow-md top-0 w-full fixed content-center h-16 z-40 bg-inherit ${
         isScrolled && "bg-white"
       }`}
     >

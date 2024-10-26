@@ -164,22 +164,19 @@ export default function Profile() {
                 />
               </div>
               <div className="flex flex-col gap-4 w-full">
-                <TextField
-                  id="outlined-basic"
+                <TextField 
                   label="Tên"
                   name="name"
                   value={editUser.name}
                   onChange={handleInputChange}
                 />
-                <TextField
-                  id="outlined-basic"
+                <TextField 
                   label="Tên đăng nhập"
                   name="username"
                   value={editUser.username}
                   onChange={handleInputChange}
                 />
-                <TextField
-                  id="outlined-basic"
+                <TextField 
                   label="Mật khẩu mới"
                   name="password"
                   type="password"
