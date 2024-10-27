@@ -1,14 +1,18 @@
+// DashRegion.jsx
 import React, { useState, useEffect } from "react";
 import envVar from "../../utils/envVar";
 import { Table } from "flowbite-react";
 import DeleteConfirmModal from "../DeleteComfirmModel";
 import { IoClose, IoCheckmarkSharp } from "react-icons/io5";
+import CreateRegionModal from "./CreateRegionModal";
 
 export default function DashRegion() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
+
+  const [openModalCreate, setOpenModalCreate] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -44,15 +48,25 @@ export default function DashRegion() {
     setOpenModalDelete(true);
   };
 
+  const handleCreateModal = () => {
+    setOpenModalCreate(true);
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Quản lý khu vực</h1>
+      <h1 className="text-2xl font-semibold py-4">Quản lý khu vực</h1>
+      <button
+        className="text-blue-500 font-semibold p-2"
+        onClick={handleCreateModal}
+      >
+        Tạo mới
+      </button>
       <div className="overflow-x-auto">
         <Table>
           <Table.Head>
             <Table.HeadCell>Tên</Table.HeadCell>
             <Table.HeadCell>Mô tả</Table.HeadCell>
-            <Table.HeadCell>Trạng thái</Table.HeadCell>{" "}
+            <Table.HeadCell>Trạng thái</Table.HeadCell>
             <Table.HeadCell>Tùy chọn</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
@@ -100,6 +114,12 @@ export default function DashRegion() {
           itemId={selectedItemId}
         />
       )}
+
+      {/* Đảm bảo truyền đúng tên biến openModalCreate */}
+      <CreateRegionModal
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate} // Cập nhật đúng trạng thái
+      />
     </div>
   );
 }
