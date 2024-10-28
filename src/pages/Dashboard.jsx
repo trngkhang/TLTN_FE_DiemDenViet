@@ -5,7 +5,7 @@ import DashRegion from "../components/dashboard/region/DashRegion";
 import DashSidebar from "../components/dashboard/DashSidebar";
 import { IoClose } from "react-icons/io5";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
-import DashProvince from "../components/dashboard/DashProvince";
+import DashProvince from "../components/dashboard/province/DashProvince";
 
 export default function Dashboard() {
   const location = useLocation();
