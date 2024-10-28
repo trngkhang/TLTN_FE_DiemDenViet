@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashboardComp from "../components/dashboard/DashboardComp";
-import DashRegion from "../components/dashboard/DashRegion";
+import DashRegion from "../components/dashboard/region/DashRegion";
 import DashSidebar from "../components/dashboard/DashSidebar";
 import { IoClose } from "react-icons/io5";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";

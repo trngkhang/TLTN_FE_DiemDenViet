@@ -1,18 +1,20 @@
-// DashRegion.jsx
-import React, { useState, useEffect } from "react";
-import envVar from "../../utils/envVar";
+import { useState, useEffect } from "react";
+import envVar from "../../../utils/envVar";
 import { Table } from "flowbite-react";
-import DeleteConfirmModal from "../DeleteComfirmModel";
+import DeleteConfirmModal from "../../DeleteComfirmModel";
 import { IoClose, IoCheckmarkSharp } from "react-icons/io5";
 import CreateRegionModal from "./CreateRegionModal";
+import EditRegionModal from "./EditRegionModal";
 
 export default function DashRegion() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
-
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState(null); // State for selected item to edit
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -52,15 +54,40 @@ export default function DashRegion() {
     setOpenModalCreate(true);
   };
 
+  const handleEditModal = (item) => {
+    setSelectedRegion(item);
+    setOpenModalEdit(true);
+  };
+
+  // Filter data based on the filterText
+  const filteredData = data.filter((item) => {
+    return (
+      item.name.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.description.toLowerCase().includes(filterText.toLowerCase()) ||
+      (item.isDeleted ? "Khóa" : "Không khóa")
+        .toLowerCase()
+        .includes(filterText.toLowerCase())
+    );
+  });
+
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý khu vực</h1>
-      <button
-        className="text-blue-500 font-semibold p-2"
-        onClick={handleCreateModal}
-      >
-        Tạo mới
-      </button>
+      <div className="flex justify-between items-center mb-4">
+        <button
+          className="text-blue-500 font-semibold p-2"
+          onClick={handleCreateModal}
+        >
+          Tạo mới
+        </button>
+        <input
+          type="text"
+          placeholder="Tìm kiếm..."
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+          className="border border-gray-300 rounded p-2"
+        />
+      </div>
       <div className="overflow-x-auto">
         <Table>
           <Table.Head>
@@ -70,8 +97,8 @@ export default function DashRegion() {
             <Table.HeadCell>Tùy chọn</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {data && data.length > 0 ? (
-              data.map((item, index) => (
+            {filteredData && filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
                 <Table.Row key={index}>
                   <Table.Cell>{item.name}</Table.Cell>
                   <Table.Cell>
@@ -85,7 +112,10 @@ export default function DashRegion() {
                     )}
                   </Table.Cell>
                   <Table.Cell className="inline-flex gap-3">
-                    <button className="text-blue-500 font-semibold hover:underline">
+                    <button
+                      className="text-blue-500 font-semibold hover:underline"
+                      onClick={() => handleEditModal(item)}
+                    >
                       Sửa
                     </button>
                     <button
@@ -99,7 +129,9 @@ export default function DashRegion() {
               ))
             ) : (
               <Table.Row>
-                <Table.Cell>Chưa có dữ liệu.</Table.Cell>
+                <Table.Cell colSpan="4" className="text-center">
+                  Không có dữ liệu phù hợp.
+                </Table.Cell>
               </Table.Row>
             )}
           </Table.Body>
@@ -115,11 +147,18 @@ export default function DashRegion() {
         />
       )}
 
-      {/* Đảm bảo truyền đúng tên biến openModalCreate */}
       <CreateRegionModal
-        openModalCreate={openModalCreate}
-        setOpenModalCreate={setOpenModalCreate} // Cập nhật đúng trạng thái
+        openModal={openModalCreate}
+        setOpenModal={setOpenModalCreate}
       />
+
+      {openModalEdit && selectedRegion && (
+        <EditRegionModal
+          openModal={openModalEdit}
+          setOpenModal={setOpenModalEdit}
+          item={selectedRegion}
+        />
+      )}
     </div>
   );
 }

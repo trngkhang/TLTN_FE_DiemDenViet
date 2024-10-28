@@ -1,31 +1,37 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";
-import envVar from "../../utils/envVar";
-import NotificationModal from "../NotificationModal";
+import envVar from "../../../utils/envVar";
+import NotificationModal from "../../NotificationModal";
 
-export default function CreateRegionModal({
-  openModalCreate,
-  setOpenModalCreate,
-}) {
-  const [formData, setformData] = useState({
-    name: "",
-    description: "",
+export default function EditRegionModal({ openModal, setOpenModal, item }) {
+  const [formData, setFormData] = useState({
+    name: item.name,
+    description: item.description,
+    isDeleted: item.isDeleted,
   });
-  const [notification, setNotification] = useState(null); // State cho thông báo
-  const [createSucess, setCreateSuccess] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [createSuccess, setCreateSuccess] = useState(false);
 
   function onCloseModal() {
-    setOpenModalCreate(false);
+    setOpenModal(false);
   }
+
   const handleChange = (e) => {
-    setformData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
+
+  const handleSelectChange = (e) => {
+    const value = e.target.value === "Khóa"; // Assume "Khóa" means true and "Không khóa" means false
+    setFormData((prev) => ({ ...prev, isDeleted: value }));
+  };
+
   const handleCreate = async () => {
     try {
       setNotification(null);
       setCreateSuccess(false);
-      const res = await fetch(`${envVar.api_url}/regions`, {
-        method: "POST",
+      const res = await fetch(`${envVar.api_url}/regions/${item._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -35,27 +41,22 @@ export default function CreateRegionModal({
       const data = await res.json();
       if (res.ok) {
         setCreateSuccess(true);
-
-        setNotification(`Tạo mới khu vực ${data?.name} thành công.`);
+        setNotification(
+          `Chỉnh sửa khu vực ${data?.updateRegion?.name} thành công.`
+        );
       } else {
         setCreateSuccess(false);
-
-        setNotification(`Tạo mới khu vực thất bại.\n${data.message}`);
+        setNotification(`Chỉnh sửa khu vực thất bại.\n${data?.message}`);
       }
     } catch (error) {
       setCreateSuccess(false);
-      setNotification(`Tạo mới khu vực thất bại.\n${error.message}`);
+      setNotification(`Chỉnh sửa khu vực thất bại.\n${error.message}`);
     }
-  };
-
-  const handleNotificationClose = () => {
-    setNotification(null);
-    window.location.reload();
   };
 
   return (
     <>
-      <Modal show={openModalCreate} size="md" onClose={onCloseModal} popup>
+      <Modal show={openModal} size="md" onClose={onCloseModal} popup>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
@@ -88,17 +89,32 @@ export default function CreateRegionModal({
                 required
               />
             </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="isDeleted" value="Khóa truy cập" />
+              </div>
+              <select
+                id="isDeleted"
+                value={formData.isDeleted ? "Khóa" : "Không khóa"}
+                onChange={handleSelectChange}
+                required
+                className="w-full p-2 border rounded"
+              >
+                <option value="Khóa">Khóa</option>
+                <option value="Không khóa">Không khóa</option>
+              </select>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-end">
-          <Button onClick={handleCreate}>Tạo mới</Button>
+          <Button onClick={handleCreate}>Cập nhật</Button>
         </Modal.Footer>
       </Modal>
 
       {notification && (
         <NotificationModal
           notification={notification}
-          reloadPage={createSucess}
+          reloadPage={createSuccess}
         />
       )}
     </>
