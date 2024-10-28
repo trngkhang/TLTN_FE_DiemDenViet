@@ -5,6 +5,7 @@ import DashRegion from "../components/dashboard/region/DashRegion";
 import DashSidebar from "../components/dashboard/DashSidebar";
 import { IoClose } from "react-icons/io5";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import DashProvince from "../components/dashboard/DashProvince";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -70,6 +71,7 @@ export default function Dashboard() {
       <div className="flex-1 p-4 md:p-2">
         {(tab === "dash" || tab === "") && <DashboardComp />}
         {tab === "region" && <DashRegion />}
+        {tab === "province" && <DashProvince />}
       </div>
     </div>
   );

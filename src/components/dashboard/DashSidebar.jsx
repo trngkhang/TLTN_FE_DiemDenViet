@@ -42,6 +42,13 @@ export default function DashSidebar({ setSidebarOpen }) {
               </Sidebar.Item>
             </Link>
           )}
+          {user.isAdmin && (
+            <Link to="/dashboard?tab=province" onClick={handleLinkClick}>
+              <Sidebar.Item active={tab === "province"} icon={FaMap} as="div">
+                Tỉnh thành
+              </Sidebar.Item>
+            </Link>
+          )}
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
