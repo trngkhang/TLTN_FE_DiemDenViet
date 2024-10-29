@@ -4,6 +4,7 @@ import { FaMap } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { MdCategory } from "react-icons/md";
 
 export default function DashSidebar({ setSidebarOpen }) {
   // Nhận setSidebarOpen từ props
@@ -46,6 +47,20 @@ export default function DashSidebar({ setSidebarOpen }) {
             <Link to="/dashboard?tab=province" onClick={handleLinkClick}>
               <Sidebar.Item active={tab === "province"} icon={FaMap} as="div">
                 Tỉnh thành
+              </Sidebar.Item>
+            </Link>
+          )}
+          {user.isAdmin && (
+            <Link
+              to="/dashboard?tab=destination-type"
+              onClick={handleLinkClick}
+            >
+              <Sidebar.Item
+                active={tab === "destination-type"}
+                icon={MdCategory}
+                as="div"
+              >
+                Loại điểm đến
               </Sidebar.Item>
             </Link>
           )}
