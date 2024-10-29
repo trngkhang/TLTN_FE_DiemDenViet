@@ -4,13 +4,16 @@ import envVar from "../../../utils/envVar";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateDestinationTypeModal from "./CreateDestinationTypeModal";
 import EditDestinationTypeModal from "./EditDestinationTypeModal";
+import DeleteConfirmModal from "../../DeleteComfirmModel";
 
 export default function DashDestinationType() {
   const [data, setData] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);  
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -39,7 +42,22 @@ export default function DashDestinationType() {
     setSelectedItem(item);
     setOpenModalEdit(true);
   };
-  
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`${envVar.api_url}/destination-type/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      await fetchData();
+    } catch (error) {
+      console.error("Lỗi khi xóa dữ liệu:", error);
+    }
+  };
+  const openDeleteModal = (id) => {
+    setSelectedItemId(id);
+    setOpenModalDelete(true);
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
@@ -111,14 +129,21 @@ export default function DashDestinationType() {
         openModal={openModalCreate}
         setOpenModal={setOpenModalCreate}
       />
-      
-{selectedItem && (
+
+      {selectedItem && (
         <EditDestinationTypeModal
           openModal={openModalEdit}
           setOpenModal={setOpenModalEdit}
           item={selectedItem}
         />
       )}
+
+      <DeleteConfirmModal
+        openModalDelete={openModalDelete}
+        setOpenModalDelete={setOpenModalDelete}
+        handleDelete={handleDelete}
+        itemId={selectedItemId}
+      />
     </div>
   );
 }
