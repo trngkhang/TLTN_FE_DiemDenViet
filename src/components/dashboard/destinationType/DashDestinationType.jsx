@@ -2,10 +2,12 @@ import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import envVar from "../../../utils/envVar";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
+import CreateDestinationTypeModal from "./CreateDestinationTypeModal";
 
 export default function DashDestinationType() {
   const [data, setData] = useState([]);
   const [filterText, setFilterText] = useState("");
+  const [openModalCreate, setOpenModalCreate] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -20,18 +22,27 @@ export default function DashDestinationType() {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
- 
+
   const filteredData = data.filter((item) => {
     return (
       item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.description.toLowerCase().includes(filterText.toLowerCase())     );
+      item.description.toLowerCase().includes(filterText.toLowerCase())
+    );
   });
+  const handleCreateModal = () => {
+    setOpenModalCreate(true);
+  };
 
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
       <div className="flex justify-between items-center mb-4">
-        <button className="text-blue-500 font-semibold p-2">Tạo mới</button>
+        <button
+          className="text-blue-500 font-semibold p-2"
+          onClick={handleCreateModal}
+        >
+          Tạo mới
+        </button>
         <input
           type="text"
           placeholder="Tìm kiếm..."
@@ -89,6 +100,10 @@ export default function DashDestinationType() {
           </Table.Body>
         </Table>
       </div>
+      <CreateDestinationTypeModal
+        openModal={openModalCreate}
+        setOpenModal={setOpenModalCreate}
+      />
     </div>
   );
 }
