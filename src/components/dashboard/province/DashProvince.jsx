@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import envVar from "../../../utils/envVar";
 import CreateProvinceModal from "./CreateProvinceModal";
+import EditProvinceModal from "./EditProvinceModal";
 
 export default function DashProvince() {
   const [data, setData] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -34,7 +37,10 @@ export default function DashProvince() {
   const handleCreateModal = () => {
     setOpenModalCreate(true);
   };
-
+  const handleEditModal = (item) => {
+    setSelectedItem(item);
+    setOpenModalEdit(true);
+  };
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý khu vực</h1>
@@ -108,6 +114,14 @@ export default function DashProvince() {
         openModal={openModalCreate}
         setOpenModal={setOpenModalCreate}
       />
+
+      {selectedItem && (
+        <EditProvinceModal
+          openModal={openModalEdit}
+          setOpenModal={setOpenModalEdit}
+          item={selectedItem}
+        />
+      )}
     </div>
   );
 }
