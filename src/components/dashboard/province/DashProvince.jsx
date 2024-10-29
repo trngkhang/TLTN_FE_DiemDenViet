@@ -5,6 +5,7 @@ import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import envVar from "../../../utils/envVar";
 import CreateProvinceModal from "./CreateProvinceModal";
 import EditProvinceModal from "./EditProvinceModal";
+import DeleteConfirmModal from "../../DeleteComfirmModel";
 
 export default function DashProvince() {
   const [data, setData] = useState([]);
@@ -12,6 +13,8 @@ export default function DashProvince() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -41,9 +44,25 @@ export default function DashProvince() {
     setSelectedItem(item);
     setOpenModalEdit(true);
   };
+  const openDeleteModal = (id) => {
+    setSelectedItemId(id);
+    setOpenModalDelete(true);
+  };
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`${envVar.api_url}/provinces/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      await fetchData();
+    } catch (error) {
+      console.error("Lỗi khi xóa dữ liệu:", error);
+    }
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-semibold py-4">Quản lý khu vực</h1>
+      <h1 className="text-2xl font-semibold py-4">Quản lý tỉnh thành</h1>
       <div className="flex justify-between items-center mb-4">
         <button
           className="text-blue-500 font-semibold p-2"
@@ -122,6 +141,13 @@ export default function DashProvince() {
           item={selectedItem}
         />
       )}
+
+      <DeleteConfirmModal
+        openModalDelete={openModalDelete}
+        setOpenModalDelete={setOpenModalDelete}
+        handleDelete={handleDelete}
+        itemId={selectedItemId}
+      />
     </div>
   );
 }
