@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import envVar from "../../../utils/envVar";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateDestinationTypeModal from "./CreateDestinationTypeModal";
+import EditDestinationTypeModal from "./EditDestinationTypeModal";
 
 export default function DashDestinationType() {
   const [data, setData] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);  
 
   useEffect(() => {
     fetchData();
@@ -32,7 +35,11 @@ export default function DashDestinationType() {
   const handleCreateModal = () => {
     setOpenModalCreate(true);
   };
-
+  const handleEditModal = (item) => {
+    setSelectedItem(item);
+    setOpenModalEdit(true);
+  };
+  
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
@@ -104,6 +111,14 @@ export default function DashDestinationType() {
         openModal={openModalCreate}
         setOpenModal={setOpenModalCreate}
       />
+      
+{selectedItem && (
+        <EditDestinationTypeModal
+          openModal={openModalEdit}
+          setOpenModal={setOpenModalEdit}
+          item={selectedItem}
+        />
+      )}
     </div>
   );
 }
