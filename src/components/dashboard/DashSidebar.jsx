@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { HiChartPie } from "react-icons/hi";
-import { FaMap } from "react-icons/fa";
+import { FaMap, FaMapMarkerAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,6 +61,20 @@ export default function DashSidebar({ setSidebarOpen }) {
                 as="div"
               >
                 Loại điểm đến
+              </Sidebar.Item>
+            </Link>
+          )}
+          {user.isAdmin && (
+            <Link
+              to="/dashboard?tab=destination"
+              onClick={handleLinkClick}
+            >
+              <Sidebar.Item
+                active={tab === "destination"}
+                icon={FaMapMarkerAlt}
+                as="div"
+              >
+                Điểm đến
               </Sidebar.Item>
             </Link>
           )}
