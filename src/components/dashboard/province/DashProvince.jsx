@@ -22,7 +22,7 @@ export default function DashProvince() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${envVar.api_url}/provinces`);
+      const response = await fetch(`${envVar.api_url}/province`);
       const result = await response.json();
       setData(result.provinces);
     } catch (error) {
@@ -31,11 +31,7 @@ export default function DashProvince() {
   };
   // Filter data based on the filterText
   const filteredData = data.filter((item) => {
-    return (
-      item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.description.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.regionId.name.toLowerCase().includes(filterText.toLowerCase())
-    );
+    return item.name.toLowerCase().includes(filterText.toLowerCase());
   });
   const handleCreateModal = () => {
     setOpenModalCreate(true);
@@ -50,7 +46,7 @@ export default function DashProvince() {
   };
   const handleDelete = async (id) => {
     try {
-      await fetch(`${envVar.api_url}/provinces/${id}`, {
+      await fetch(`${envVar.api_url}/province/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -82,8 +78,6 @@ export default function DashProvince() {
         <Table>
           <Table.Head>
             <Table.HeadCell>Tên</Table.HeadCell>
-            <Table.HeadCell>Mô tả</Table.HeadCell>
-            <Table.HeadCell>Vùng miền</Table.HeadCell>
             <Table.HeadCell>Trạng thái</Table.HeadCell>
             <Table.HeadCell>Tùy chọn</Table.HeadCell>
           </Table.Head>
@@ -92,10 +86,6 @@ export default function DashProvince() {
               filteredData.map((item, index) => (
                 <Table.Row key={index}>
                   <Table.Cell>{item.name}</Table.Cell>
-                  <Table.Cell>
-                    <p className="line-clamp-2">{item.description}</p>
-                  </Table.Cell>
-                  <Table.Cell>{item.regionId?.name}</Table.Cell>
                   <Table.Cell>
                     {item.isDeleted ? (
                       <IoClose className="text-red-500" />

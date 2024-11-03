@@ -51,6 +51,20 @@ export default function DashSidebar({ setSidebarOpen }) {
             </Link>
           )}
           {user.isAdmin && (
+            <Link to="/dashboard?tab=district" onClick={handleLinkClick}>
+              <Sidebar.Item active={tab === "district"} icon={FaMap} as="div">
+                Quận huyện
+              </Sidebar.Item>
+            </Link>
+          )} 
+          {user.isAdmin && (
+            <Link to="/dashboard?tab=ward" onClick={handleLinkClick}>
+              <Sidebar.Item active={tab === "ward"} icon={FaMap} as="div">
+                Quận huyện
+              </Sidebar.Item>
+            </Link>
+          )}
+          {user.isAdmin && (
             <Link
               to="/dashboard?tab=destination-type"
               onClick={handleLinkClick}
@@ -65,10 +79,7 @@ export default function DashSidebar({ setSidebarOpen }) {
             </Link>
           )}
           {user.isAdmin && (
-            <Link
-              to="/dashboard?tab=destination"
-              onClick={handleLinkClick}
-            >
+            <Link to="/dashboard?tab=destination" onClick={handleLinkClick}>
               <Sidebar.Item
                 active={tab === "destination"}
                 icon={FaMapMarkerAlt}

@@ -8,6 +8,8 @@ import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import DashProvince from "../components/dashboard/province/DashProvince";
 import DashDestinationType from "../components/dashboard/destinationType/DashDestinationType";
 import DashDestination from "../components/dashboard/destination/DashDestination";
+import DashDistrict from "../components/dashboard/district/DashDistrict";
+import DashWard from "../components/dashboard/ward/DashWard";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -74,6 +76,8 @@ export default function Dashboard() {
         {(tab === "dash" || tab === "") && <DashboardComp />}
         {tab === "region" && <DashRegion />}
         {tab === "province" && <DashProvince />}
+        {tab === "district" && <DashDistrict />}
+        {tab === "ward" && <DashWard/>}
         {tab === "destination-type" && <DashDestinationType />}
         {tab === "destination" && <DashDestination />}
       </div>
