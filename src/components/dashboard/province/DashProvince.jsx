@@ -95,7 +95,7 @@ export default function DashProvince() {
                   <Table.Cell>
                     <p className="line-clamp-2">{item.description}</p>
                   </Table.Cell>
-                  <Table.Cell>{item.regionId.name}</Table.Cell>
+                  <Table.Cell>{item.regionId?.name}</Table.Cell>
                   <Table.Cell>
                     {item.isDeleted ? (
                       <IoClose className="text-red-500" />

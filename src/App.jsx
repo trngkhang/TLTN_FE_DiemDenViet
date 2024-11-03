@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import Dashboard from "./pages/Dashboard";
+import CreateDestination from "./pages/CreateDestination";
 
 function App() {
   const dispatch = useDispatch();
@@ -47,6 +48,10 @@ function App() {
 
             <Route element={<AdminPrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/destination/create"
+                element={<CreateDestination />}
+              />
             </Route>
 
             <Route path="*" element={<PageNotFound />} />

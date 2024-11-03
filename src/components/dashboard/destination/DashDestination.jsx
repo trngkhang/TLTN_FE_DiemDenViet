@@ -2,6 +2,7 @@ import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import envVar from "../../../utils/envVar";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 export default function DashDestination() {
   const [data, setData] = useState([]);
@@ -32,7 +33,7 @@ export default function DashDestination() {
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
       <div className="flex justify-between items-center mb-4">
-        <button className="text-blue-500 font-semibold p-2">Tạo mới</button>
+        <Link to='/destination/create' className="text-blue-500 font-semibold p-2">Tạo mới</Link>
         <input
           type="text"
           placeholder="Tìm kiếm..."
