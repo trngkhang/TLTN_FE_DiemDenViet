@@ -56,11 +56,11 @@ export default function DashSidebar({ setSidebarOpen }) {
                 Quận huyện
               </Sidebar.Item>
             </Link>
-          )} 
+          )}
           {user.isAdmin && (
             <Link to="/dashboard?tab=ward" onClick={handleLinkClick}>
               <Sidebar.Item active={tab === "ward"} icon={FaMap} as="div">
-                Quận huyện
+                Phường xã
               </Sidebar.Item>
             </Link>
           )}

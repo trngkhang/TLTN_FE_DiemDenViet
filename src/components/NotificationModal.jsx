@@ -1,14 +1,22 @@
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
-export default function NotificationModal({ notification, reloadPage }) {
+export default function NotificationModal({
+  notification,
+  reloadPage,
+  navigateTo,
+}) {
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(true);
 
   const handleClose = () => {
     setOpenModal(false);
-    if (reloadPage) {
-      window.location.reload();
+    if (navigateTo) {
+      navigate(navigateTo); // Navigate to specified page
+    } else if (reloadPage) {
+      window.location.reload(); // Reload the page
     }
   };
 
@@ -23,7 +31,7 @@ export default function NotificationModal({ notification, reloadPage }) {
           </h3>
           <div className="flex justify-center gap-4">
             <Button
-              color={reloadPage ? "success" : "failure"}
+              color={reloadPage || navigateTo ? "success" : "failure"}
               onClick={handleClose}
             >
               Đóng

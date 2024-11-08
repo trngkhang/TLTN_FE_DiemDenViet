@@ -1,22 +1,36 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { Button, FileInput, Select, TextInput } from "flowbite-react";
-import envVar from "../utils/envVar";
-import { useEffect, useState } from "react";
+import { TextField } from "@mui/material";
+import { Alert, Button } from "flowbite-react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import OpeningTime from "../components/OpeningTime";
+import OpeningTime from "../components/create-destination/OpeningTime";
 import { HiOutlineArrowRight } from "react-icons/hi";
+import { IoIosArrowForward } from "react-icons/io";
+import SelectCategory from "../components/create-destination/SelectCategory";
+import UploadImage from "../components/create-destination/UploadImage";
+import SelectAddress from "../components/create-destination/SelectAddress";
+import envVar from "../utils/envVar";
+import { useNavigate } from "react-router-dom";
+import NotificationModal from "../components/NotificationModal";
 
 export default function CreateDestination() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     introduce: "",
-    address: "",
-    destinationTypeId: "",
+    address: {},
+    subcategoryId: "",
+    subcategoryName: "",
+    image: "",
+    openingTime: [],
+    description: "",
   });
-  const [destinationTypeOptions, setDestinationTypeOptions] = useState([]);
-  const [regionOptions, setRegionOptions] = useState([]);
   const [openingModal, setOpeningModal] = useState(false);
+  const [openModalCategory, setOpenModalCategory] = useState(false);
+  const [openModalAddress, setOpenModalAddress] = useState(false);
+  const [publishErorr, setPublishErorr] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [navigateURL, setNavigateURL] = useState(null);
 
   const toolbarOptions = [
     [
@@ -31,32 +45,35 @@ export default function CreateDestination() {
     [{ list: "ordered" }, { list: "bullet" }],
     ["clean"], // remove formatting button
   ];
-
-  useEffect(() => {
-    const fetchDestinationTypes = async () => {
-      const res = await fetch(
-        `${envVar.api_url}/destination-type?isDeleted=false`
-      );
-      const data = await res.json();
-      const destinationTypeOptions = data.destinationTypes.map((item) => ({
-        label: item.name,
-        id: item._id,
-      }));
-      setDestinationTypeOptions(destinationTypeOptions);
-    };
-    fetchDestinationTypes();
-    const fetchRegionOptions = async () => {
-      const res = await fetch(`${envVar.api_url}/regions?isDeleted=false`);
-      const data = await res.json();
-      const regionOptions = data.regions.map((item) => ({
-        label: item.name,
-        id: item._id,
-      }));
-      setRegionOptions(regionOptions);
-    };
-    fetchRegionOptions();
-  }, []);
   console.log(formData);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${envVar.api_url}/destination`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log(data);
+      if (!res.ok) {
+        setPublishErorr(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPublishErorr(null);
+        navigate(`/destination/${data._id}`);
+        setNavigateURL(`/destination/${data._id}`);
+        setNotification(`Tạo thành công điểm đến ${data.name}`);
+      }
+    } catch (error) {
+      setPublishErorr(error.message);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-3">
@@ -64,76 +81,54 @@ export default function CreateDestination() {
         TẠO MỚI ĐIỂM ĐẾN
       </h1>
 
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4">
-          <TextField id="name" label="Tên điểm đến" variant="outlined" />
-          <div className="w-full flex gap-3">
-            <TextField
-              id="openingTime"
-              label="Thời gian mở cửa"
-              variant="outlined"
-            />
-            <TextField id="ticketPrice" label="Giá vé" variant="outlined" />
-          </div>
-          <OpeningTime
-            openModal={openingModal}
-            setOpenModal={setOpeningModal}
+          <TextField
+            id="name"
+            label="Tên điểm đến"
+            variant="outlined"
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
-          <Button color="light" onClick={() => setOpeningModal(true)} >
-            Chọn giờ hoạt động
+          <TextField
+            id="introduce"
+            label="Giới thiệu"
+            variant="outlined"
+            onChange={(e) =>
+              setFormData({ ...formData, introduce: e.target.value })
+            }
+          />
+          <div className="w-full grid grid-cols-2 gap-3">
+            <TextField
+              id="ticketPrice"
+              label="Giá vé"
+              variant="outlined"
+              onChange={(e) =>
+                setFormData({ ...formData, ticketPrice: e.target.value })
+              }
+            />
+            <Button color="light" onClick={() => setOpeningModal(true)}>
+              Chọn giờ hoạt động
+              <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+          <Button color="light" onClick={() => setOpenModalAddress(true)}>
+            Chọn địa chỉ
             <HiOutlineArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <TextField id="introduce" label="Giới thiệu" variant="outlined" />
-          <TextField id="address" label="Địa chỉ" variant="outlined" />
-          
-          <Autocomplete
-            id="destinationTypeId"
-            size="small"
-            disablePortal
-            options={destinationTypeOptions}
-            sx={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Tỉnh thành" />
-            )}
-            onChange={(event, value) => {
-              if (value) {
-                setFormData({
-                  ...formData,
-                  destinationTypeIdionId: value.label,
-                });
-              }
-            }}
-          />
-          <Autocomplete
-            id="regionId"
-            size="small"
-            disablePortal
-            options={regionOptions}
-            sx={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Loại điểm đến" />
-            )}
-            onChange={(event, value) => {
-              if (value) {
-                setFormData({
-                  ...formData,
-                  destinationTypeIdionId: value.label,
-                });
-              }
-            }}
-          />
-        </div>
-        <div className="flex flex-row justify-between border-2 border-teal-500 border-dotted p-2">
-          <FileInput type="file" accept="image/*" />
           <Button
-            type="button"
-            gradientDuoTone="purpleToBlue"
-            size="sm"
             outline
+            color="light"
+            className="hover:border-black rounded-sm"
+            onClick={() => setOpenModalCategory(true)}
           >
-            Upload image
+            {formData?.subcategoryId
+              ? formData.subcategoryName
+              : "Loại điểm đến"}
+
+            <IoIosArrowForward className="mr-2 h-5 w-5" />
           </Button>
         </div>
+        <UploadImage formData={formData} setFormData={setFormData} />
         <ReactQuill
           theme="snow"
           placeholder="Write something..."
@@ -141,10 +136,36 @@ export default function CreateDestination() {
           modules={{ toolbar: toolbarOptions }}
           onChange={(value) => setFormData({ ...formData, description: value })}
         />
+        {publishErorr && <Alert color="failure">{publishErorr}</Alert>}
         <Button type="=submit" gradientDuoTone="greenToBlue">
           Tạo mới điểm đến
         </Button>
       </form>
+
+      <OpeningTime
+        openModal={openingModal}
+        setOpenModal={setOpeningModal}
+        formData={formData}
+        setFormData={setFormData}
+      />
+      <SelectCategory
+        openModal={openModalCategory}
+        setOpenModal={setOpenModalCategory}
+        formData={formData}
+        setFormData={setFormData}
+      />
+      <SelectAddress
+        openModal={openModalAddress}
+        setOpenModal={setOpenModalAddress}
+        formData={formData}
+        setFormData={setFormData}
+      />
+      {notification && (
+        <NotificationModal
+          notification={notification}
+          navigateTo={navigateURL}
+        />
+      )}
     </div>
   );
 }
