@@ -12,6 +12,7 @@ export default function SelectCategory({
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [checkSub, setCheckSub] = useState(true);
+  const [IDcategory, setIDcategory] = useState(formData.category.categoryId);
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -20,7 +21,10 @@ export default function SelectCategory({
       setCategories(data.categories);
     };
     fetchCategory();
-  }, []);
+    if (formData.category.categoryId) {
+      openSubcategory(formData.category.categoryId);
+    }
+  }, [formData.category]);
 
   const openSubcategory = (categoryId) => {
     const fetchSubcategory = async () => {
@@ -32,13 +36,16 @@ export default function SelectCategory({
     };
     fetchSubcategory();
     setCheckSub(false);
+    setIDcategory(categoryId)
   };
 
-  const setSubcategory = (item) => {
+  const setCategoryAndSubcategory = (subcategoryId) => {
     setFormData({
       ...formData,
-      subcategoryId: item._id,
-      subcategoryName: item.name,
+      category: {
+        categoryId: IDcategory,
+        subcategoryId: subcategoryId,
+      },
     });
     setOpenModal(false);
   };
@@ -53,7 +60,11 @@ export default function SelectCategory({
               ? categories.map((item, index) => (
                   <Button
                     color="light"
-                    className="border-none flex justify-between w-full"
+                    className={`border-none flex justify-between w-full ${
+                      item._id === formData.category.categoryId
+                        ? "bg-gray-200"
+                        : ""
+                    }`}
                     key={index}
                     onClick={() => openSubcategory(item._id)}
                   >
@@ -64,9 +75,13 @@ export default function SelectCategory({
               : subcategories.map((item, index) => (
                   <Button
                     color="light"
-                    className="border-none justify-start"
+                    className={`border-none justify-start ${
+                      item._id === formData.category.subcategoryId
+                        ? "bg-gray-200"
+                        : ""
+                    }`}
                     key={index}
-                    onClick={() => setSubcategory(item)}
+                    onClick={() => setCategoryAndSubcategory(item._id)}
                   >
                     {item.name}
                   </Button>

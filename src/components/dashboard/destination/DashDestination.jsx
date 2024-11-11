@@ -33,7 +33,12 @@ export default function DashDestination() {
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
       <div className="flex justify-between items-center mb-4">
-        <Link to='/destination/create' className="text-blue-500 font-semibold p-2">Tạo mới</Link>
+        <Link
+          to="/destination/create"
+          className="text-blue-500 font-semibold p-2"
+        >
+          Tạo mới
+        </Link>
         <input
           type="text"
           placeholder="Tìm kiếm..."
@@ -72,12 +77,12 @@ export default function DashDestination() {
                     )}
                   </Table.Cell>
                   <Table.Cell className="inline-flex gap-3">
-                    <button
+                    <Link
                       className="text-blue-500 font-semibold hover:underline"
-                      onClick={() => handleEditModal(item)}
+                      to={`/destination/${item._id}/update`}
                     >
                       Sửa
-                    </button>
+                    </Link>
                     <button
                       className="text-red-500 font-semibold hover:underline"
                       onClick={() => openDeleteModal(item._id)}

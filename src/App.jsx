@@ -17,6 +17,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import CreateDestination from "./pages/CreateDestination";
+import UpdateDestination from "./pages/UpdateDestination";
 
 function App() {
   const dispatch = useDispatch();
@@ -51,6 +52,10 @@ function App() {
               <Route
                 path="/destination/create"
                 element={<CreateDestination />}
+              />
+              <Route
+                path="/destination/:destinationId/update"
+                element={<UpdateDestination />}
               />
             </Route>
 

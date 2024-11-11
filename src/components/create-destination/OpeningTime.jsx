@@ -1,5 +1,5 @@
 import { Button, Modal } from "flowbite-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function OpeningTime({
   openModal,
@@ -17,36 +17,33 @@ export default function OpeningTime({
     "Chủ nhật",
   ];
 
-  const [openingHours, setOpeningHours] = useState(
-    formData.openingTime.length > 0
-      ? formData.openingTime
-      : daysOfWeek.map((day) => ({
+  const [selectedGroup, setSelectedGroup] = useState("all");
+
+  // Cập nhật formData khi mở modal
+  useEffect(() => {
+    if (formData.openingTime.length === 0) {
+      setFormData({
+        ...formData,
+        openingTime: daysOfWeek.map((day) => ({
           day,
           open: false,
           openAllDay: false,
           closedAllDay: false,
           startTime: "",
           endTime: "",
-        }))
-  );
-
-  const [selectedGroup, setSelectedGroup] = useState("all");
-
-  // Update formData when openingHours changes
-  useEffect(() => {
-    if (JSON.stringify(openingHours) !== JSON.stringify(formData.openingTime)) {
-      setFormData({ ...formData, openingTime: openingHours });
+        })),
+      });
     }
-  }, [openingHours, formData, setFormData]);
+  }, [openModal, formData, setFormData]);
 
   const handleToggleDay = (index) => {
-    const newOpeningHours = [...openingHours];
+    const newOpeningHours = [...formData.openingTime];
     newOpeningHours[index].open = !newOpeningHours[index].open;
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleTimeChange = (index, field, value) => {
-    const newOpeningHours = [...openingHours];
+    const newOpeningHours = [...formData.openingTime];
     newOpeningHours[index][field] = value;
 
     const { startTime, endTime } = newOpeningHours[index];
@@ -58,52 +55,12 @@ export default function OpeningTime({
       return;
     }
 
-    if (selectedGroup === "all") {
-      setOpeningHours(
-        newOpeningHours.map((day) => ({
-          ...day,
-          [field]: value,
-          open: true,
-          openAllDay: false,
-          closedAllDay: false,
-        }))
-      );
-    } else if (selectedGroup === "weekdays" && index < 5) {
-      setOpeningHours(
-        newOpeningHours.map((day, i) =>
-          i < 5
-            ? {
-                ...day,
-                [field]: value,
-                open: true,
-                openAllDay: false,
-                closedAllDay: false,
-              }
-            : day
-        )
-      );
-    } else if (selectedGroup === "weekends" && index >= 5) {
-      setOpeningHours(
-        newOpeningHours.map((day, i) =>
-          i >= 5
-            ? {
-                ...day,
-                [field]: value,
-                open: true,
-                openAllDay: false,
-                closedAllDay: false,
-              }
-            : day
-        )
-      );
-    } else {
-      setOpeningHours(newOpeningHours);
-    }
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleApplyToAllDays = () => {
     setSelectedGroup("all");
-    const newOpeningHours = openingHours.map((day) => ({
+    const newOpeningHours = formData.openingTime.map((day) => ({
       ...day,
       open: true,
       openAllDay: false,
@@ -111,12 +68,12 @@ export default function OpeningTime({
       startTime: "08:00",
       endTime: "18:00",
     }));
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleApplyToWeekdays = () => {
     setSelectedGroup("weekdays");
-    const newOpeningHours = openingHours.map((day, index) => {
+    const newOpeningHours = formData.openingTime.map((day, index) => {
       if (index < 5) {
         return {
           ...day,
@@ -129,12 +86,12 @@ export default function OpeningTime({
       }
       return day;
     });
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleApplyToWeekends = () => {
     setSelectedGroup("weekends");
-    const newOpeningHours = openingHours.map((day, index) => {
+    const newOpeningHours = formData.openingTime.map((day, index) => {
       if (index >= 5) {
         return {
           ...day,
@@ -147,11 +104,11 @@ export default function OpeningTime({
       }
       return day;
     });
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleToggleOpenAllDay = (index) => {
-    const newOpeningHours = [...openingHours];
+    const newOpeningHours = [...formData.openingTime];
     newOpeningHours[index].openAllDay = !newOpeningHours[index].openAllDay;
     newOpeningHours[index].closedAllDay = false;
     if (newOpeningHours[index].openAllDay) {
@@ -161,11 +118,11 @@ export default function OpeningTime({
       newOpeningHours[index].startTime = "";
       newOpeningHours[index].endTime = "";
     }
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   const handleToggleClosedAllDay = (index) => {
-    const newOpeningHours = [...openingHours];
+    const newOpeningHours = [...formData.openingTime];
     newOpeningHours[index].closedAllDay = !newOpeningHours[index].closedAllDay;
     newOpeningHours[index].openAllDay = false;
     newOpeningHours[index].open = !newOpeningHours[index].closedAllDay;
@@ -173,7 +130,7 @@ export default function OpeningTime({
       newOpeningHours[index].startTime = "";
       newOpeningHours[index].endTime = "";
     }
-    setOpeningHours(newOpeningHours);
+    setFormData({ ...formData, openingTime: newOpeningHours });
   };
 
   return (
@@ -188,7 +145,7 @@ export default function OpeningTime({
             <Button onClick={handleApplyToWeekdays}>Chỉnh sửa T2 - T6</Button>
             <Button onClick={handleApplyToWeekends}>Chỉnh sửa T7 - CN</Button>
           </div>
-          {openingHours.map((day, index) => (
+          {formData.openingTime.map((day, index) => (
             <div key={index} style={{ marginBottom: "1em" }}>
               <label className="flex items-center">
                 <input

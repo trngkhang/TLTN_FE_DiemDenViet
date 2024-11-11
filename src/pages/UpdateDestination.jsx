@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { Alert, Button } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import OpeningTime from "../components/create-destination/OpeningTime";
@@ -10,25 +10,29 @@ import SelectCategory from "../components/create-destination/SelectCategory";
 import UploadImage from "../components/create-destination/UploadImage";
 import SelectAddress from "../components/create-destination/SelectAddress";
 import envVar from "../utils/envVar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NotificationModal from "../components/NotificationModal";
 
-export default function CreateDestination() {
+export default function UpdateDestination() {
   const navigate = useNavigate();
+  const { destinationId } = useParams();
+
+  // Initialize form data state
   const [formData, setFormData] = useState({
     name: "",
     introduce: "",
     address: {},
     category: {},
-    subcategoryName: "",
     image: "",
     openingTime: [],
     description: "",
+    ticketPrice: "",
   });
+
   const [openingModal, setOpeningModal] = useState(false);
   const [openModalCategory, setOpenModalCategory] = useState(false);
   const [openModalAddress, setOpenModalAddress] = useState(false);
-  const [publishErorr, setPublishErorr] = useState(null);
+  const [publishError, setPublishError] = useState(null);
   const [notification, setNotification] = useState(null);
   const [navigateURL, setNavigateURL] = useState(null);
 
@@ -43,42 +47,85 @@ export default function CreateDestination() {
     ["blockquote", "code-block"],
     ["link", "image", "video"],
     [{ list: "ordered" }, { list: "bullet" }],
-    ["clean"], // remove formatting button
+    ["clean"],
   ];
-  console.log(formData);
+
+  // Fetch data only if destinationId changes
+  const fetchDestination = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${envVar.api_url}/destination/${destinationId}/update`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setPublishError(null);
+        // Update formData with fetched data
+        setFormData((prevData) => ({
+          ...prevData,
+          name: data.name || "",
+          introduce: data.introduce || "",
+          address: data.address || {},
+          category: {
+            categoryId: data.category.categoryId || "",
+            subcategoryId: data.category.subcategoryId || "",
+          },
+          image: data.image || "",
+          openingTime: data.openingTime || [],
+          description: data.description || "",
+          ticketPrice: data.ticketPrice || "",
+        }));
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, [destinationId]);
+
+  useEffect(() => {
+    fetchDestination();
+  }, [fetchDestination]);
+
+  // Avoid direct mutation by defining specific update functions for each field
+  const handleFormDataChange = (field, value) => {
+    setFormData((prevData) => ({ ...prevData, [field]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${envVar.api_url}/destination`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${envVar.api_url}/destination/${destinationId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+          credentials: "include",
+        }
+      );
       const data = await res.json();
       console.log(data);
       if (!res.ok) {
-        setPublishErorr(data.message);
+        setPublishError(data.message);
         return;
       }
       if (res.ok) {
-        setPublishErorr(null);
+        setPublishError(null);
         navigate(`/destination/${data._id}`);
         setNavigateURL(`/destination/${data._id}`);
         setNotification(`Tạo thành công điểm đến ${data.name}`);
       }
     } catch (error) {
-      setPublishErorr(error.message);
+      setPublishError(error.message);
     }
   };
-
+  console.log(formData);
   return (
     <div className="max-w-4xl mx-auto p-3">
       <h1 className=" text-4xl font-semibold text-center pt-2 pb-8">
-        TẠO MỚI ĐIỂM ĐẾN
+        CHỈNH SỬA ĐIỂM ĐẾN
       </h1>
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -87,23 +134,24 @@ export default function CreateDestination() {
             id="name"
             label="Tên điểm đến"
             variant="outlined"
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
+            onChange={(e) => handleFormDataChange("name", e.target.value)}
           />
           <TextField
             id="introduce"
             label="Giới thiệu"
             variant="outlined"
-            onChange={(e) =>
-              setFormData({ ...formData, introduce: e.target.value })
-            }
+            value={formData.introduce}
+            onChange={(e) => handleFormDataChange("introduce", e.target.value)}
           />
           <div className="w-full grid grid-cols-2 gap-3">
             <TextField
               id="ticketPrice"
               label="Giá vé"
               variant="outlined"
+              value={formData.ticketPrice}
               onChange={(e) =>
-                setFormData({ ...formData, ticketPrice: e.target.value })
+                handleFormDataChange("ticketPrice", e.target.value)
               }
             />
             <Button color="light" onClick={() => setOpeningModal(true)}>
@@ -121,10 +169,9 @@ export default function CreateDestination() {
             className="hover:border-black rounded-sm"
             onClick={() => setOpenModalCategory(true)}
           >
-            {formData?.subcategoryId
+            {formData.subcategoryId
               ? formData.subcategoryName
               : "Loại điểm đến"}
-
             <IoIosArrowForward className="mr-2 h-5 w-5" />
           </Button>
         </div>
@@ -134,14 +181,16 @@ export default function CreateDestination() {
           placeholder="Write something..."
           required
           modules={{ toolbar: toolbarOptions }}
-          onChange={(value) => setFormData({ ...formData, description: value })}
+          value={formData.description}
+          onChange={(value) => handleFormDataChange("description", value)}
         />
-        {publishErorr && <Alert color="failure">{publishErorr}</Alert>}
-        <Button type="=submit" gradientDuoTone="greenToBlue">
-          Tạo mới điểm đến
+        {publishError && <Alert color="failure">{publishError}</Alert>}
+        <Button type="submit" gradientDuoTone="greenToBlue">
+          Cập nhật
         </Button>
       </form>
 
+      {/* Modals */}
       <OpeningTime
         openModal={openingModal}
         setOpenModal={setOpeningModal}
