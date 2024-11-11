@@ -60,7 +60,14 @@ export default function DashDestination() {
             {filteredData && filteredData.length > 0 ? (
               filteredData.map((item, index) => (
                 <Table.Row key={index} className="justify-self-center">
-                  <Table.Cell>{item.name}</Table.Cell>
+                  <Table.Cell>
+                    <Link
+                      to={`/destination/${item._id}`}
+                      className="hover:text-blue-400"
+                    >
+                      {item.name}
+                    </Link>
+                  </Table.Cell>
                   <Table.Cell>
                     <img
                       src={item.image}
