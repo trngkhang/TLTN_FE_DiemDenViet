@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { Alert, Button } from "flowbite-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import OpeningTime from "../components/create-destination/OpeningTime";
@@ -12,9 +12,17 @@ import SelectAddress from "../components/create-destination/SelectAddress";
 import envVar from "../utils/envVar";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationModal from "../components/NotificationModal";
+import { app } from "../utils/firebase";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 export default function UpdateDestination() {
   const navigate = useNavigate();
+  const quillRef = useRef(null); // Quill reference to access the editor
   const { destinationId } = useParams();
 
   // Initialize form data state
@@ -35,6 +43,54 @@ export default function UpdateDestination() {
   const [publishError, setPublishError] = useState(null);
   const [notification, setNotification] = useState(null);
   const [navigateURL, setNavigateURL] = useState(null);
+  // Hàm upload ảnh lên Firebase Storage
+  const handleUploadImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        return reject("No file selected");
+      }
+
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + "-" + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+            resolve(downloadUrl);
+          });
+        }
+      );
+    });
+  };
+
+  // Xử lý chèn ảnh vào ReactQuill
+  const handleImageUpload = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+      const file = input.files[0];
+      try {
+        const imageUrl = await handleUploadImage(file);
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, "image", imageUrl);
+      } catch (error) {
+        console.error("Image upload failed:", error);
+      }
+    };
+    input.click();
+  };
 
   const toolbarOptions = [
     [
@@ -45,10 +101,14 @@ export default function UpdateDestination() {
     ["bold", "italic", "underline", "strike"],
     [{ color: [] }, { background: [] }],
     ["blockquote", "code-block"],
-    ["link", "image", "video"],
+    ["link", "video"],
     [{ list: "ordered" }, { list: "bullet" }],
     ["clean"],
   ];
+
+  const modules = {
+    toolbar: toolbarOptions,
+  };
 
   // Fetch data only if destinationId changes
   const fetchDestination = useCallback(async () => {
@@ -106,16 +166,14 @@ export default function UpdateDestination() {
         }
       );
       const data = await res.json();
-      console.log(data);
       if (!res.ok) {
         setPublishError(data.message);
         return;
       }
       if (res.ok) {
         setPublishError(null);
-        navigate(`/destination/${data._id}`);
-        setNavigateURL(`/destination/${data._id}`);
-        setNotification(`Tạo thành công điểm đến ${data.name}`);
+        setNavigateURL(`/destination/${data.newDestination._id}`);
+        setNotification(`Tạo thành công điểm đến ${data.newDestination.name}`);
       }
     } catch (error) {
       setPublishError(error.message);
@@ -180,10 +238,16 @@ export default function UpdateDestination() {
           theme="snow"
           placeholder="Write something..."
           required
-          modules={{ toolbar: toolbarOptions }}
+          ref={quillRef}
+          modules={modules}
           value={formData.description}
           onChange={(value) => handleFormDataChange("description", value)}
         />
+        {/* Nút tải ảnh ngoài Quill toolbar */}
+        <Button onClick={handleImageUpload} color="light">
+          Chèn ảnh
+        </Button>
+
         {publishError && <Alert color="failure">{publishError}</Alert>}
         <Button type="submit" gradientDuoTone="greenToBlue">
           Cập nhật
