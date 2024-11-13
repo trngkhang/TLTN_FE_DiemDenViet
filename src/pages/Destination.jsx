@@ -1,34 +1,37 @@
 import { useEffect, useState } from "react";
-import { Dropdown } from "flowbite-react";
+import { Button, Dropdown } from "flowbite-react";
 import envVar from "../utils/envVar";
-import { Autocomplete, Pagination, TextField } from "@mui/material";
 import DestinationCard from "../components/DestinationCard";
+import SelectAddress from "../components/search-destination/SelectAddress";
+import { HiOutlineArrowRight } from "react-icons/hi";
+import SelectCategory from "../components/search-destination/SelectCategory";
+import { useNavigate } from "react-router-dom";
+import { Pagination } from "@mui/material";
 
 export default function Destination() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [regions, setRegions] = useState([]);
-  const [provinces, setProvinces] = useState([]);
-  const [destinationTypes, setDestinationTypes] = useState([]);
-  const [filter, setFilter] = useState({
-    searchTerm: "",
-    provinceId: "",
-    destinationTypeId: "",
-  });
+  const [filter, setFilter] = useState({});
   const [destinations, setDestinations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const itemsPerPage = 12; // hoặc giá trị khác tùy ý
+  const [openModalAddress, setOpenModalAddress] = useState(false);
+  const [openModalCategory, setOpenModalCategory] = useState(false);
 
   const handleSearch = async () => {
+    const queryParams = new URLSearchParams({
+      ...(filter.searchTerm && { searchTerm: filter.searchTerm }),
+      ...(filter.provinceId && { provinceId: filter.provinceId }),
+      ...(filter.districtId && { districtId: filter.districtId }),
+      ...(filter.wardId && { wardId: filter.wardId }),
+      ...(filter.categoryId && { categoryId: filter.categoryId }),
+      ...(filter.subcategoryId && { subcategoryId: filter.subcategoryId }),
+      ...(filter.sortBy && { sortBy: filter.sortBy }),
+      startIndex: (currentPage - 1) * itemsPerPage,
+      limit: itemsPerPage,
+    }).toString();
     try {
-      const queryParams = new URLSearchParams({
-        searchTerm: filter.searchTerm,
-        provinceId: filter.provinceId,
-        destinationTypeId: filter.destinationTypeId,
-        startIndex: (currentPage - 1) * itemsPerPage,
-        limit: itemsPerPage,
-      }).toString();
-
       const res = await fetch(`${envVar.api_url}/destination?${queryParams}`, {
         method: "GET",
       });
@@ -43,41 +46,6 @@ export default function Destination() {
   };
 
   useEffect(() => {
-    const fetchRegions = async () => {
-      const res = await fetch(`${envVar.api_url}/regions`);
-      const data = await res.json();
-      const arrRegions = data.regions.map((region) => ({
-        label: region.name,
-        id: region._id,
-      }));
-      setRegions(arrRegions);
-    };
-    fetchRegions();
-
-    const fetchProvinces = async () => {
-      const res = await fetch(`${envVar.api_url}/provinces`);
-      const data = await res.json();
-      const arrProvinces = data.provinces.map((province) => ({
-        label: province.name,
-        id: province._id,
-      }));
-      setProvinces(arrProvinces);
-    };
-    fetchProvinces();
-
-    const fetchDestinationTypes = async () => {
-      const res = await fetch(`${envVar.api_url}/destination-type`);
-      const data = await res.json();
-      const arrDestinationTypes = data.destinationTypes.map(
-        (destinationType) => ({
-          label: destinationType.name,
-          id: destinationType._id,
-        })
-      );
-      setDestinationTypes(arrDestinationTypes);
-    };
-    fetchDestinationTypes();
-
     handleSearch();
   }, [filter, currentPage]); // Thêm currentPage vào dependencies
 
@@ -115,14 +83,14 @@ export default function Destination() {
                   id="default-search"
                   className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Tìm kiếm điểm đến"
-                  required
-                  onChange={(e) =>
-                    setFilter({ ...filter, searchTerm: e.target.value })
-                  }
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
 
                 <button
-                  onClick={handleSearch}
+                  onClick={() =>
+                    setFilter({ ...filter, searchTerm: searchTerm })
+                  }
                   className="text-white absolute end-2.5 bottom-2.5 bg-gray-400 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 "
                 >
                   Tìm kiếm
@@ -132,40 +100,38 @@ export default function Destination() {
           </div>
           <div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center py-3">
-              <Autocomplete
-                size="small"
-                disablePortal
-                options={provinces}
-                sx={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Tỉnh thành" />
-                )}
-                onChange={(event, value) => {
-                  if (value) {
-                    setFilter({ ...filter, provinceId: value.id });
-                  }
-                }}
-              />
-              <Autocomplete
-                size="small"
-                disablePortal
-                options={destinationTypes}
-                sx={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Loại điểm đến" />
-                )}
-                onChange={(event, value) => {
-                  if (value) {
-                    setFilter({ ...filter, destinationTypeId: value.id });
-                  }
-                }}
-              />
+              <Button color="light" onClick={() => setOpenModalAddress(true)}>
+                Chọn địa chỉ
+                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button color="light" onClick={() => setOpenModalCategory(true)}>
+                Chọn loại điểm đến
+                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </div>
-          <Dropdown label="Sắp xếp theo:" inline className="mr-0">
-            <Dropdown.Item>Đánh giá</Dropdown.Item>
-            <Dropdown.Item>Lượt xem</Dropdown.Item>
-          </Dropdown>
+          <div className="flex justify-between">
+            <Dropdown label="Sắp xếp theo:" inline className="mr-0">
+              <Dropdown.Item
+                onClick={() => setFilter({ ...filter, sortBy: "rating" })}
+              >
+                Đánh giá
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => setFilter({ ...filter, sortBy: "views" })}
+              >
+                Lượt xem
+              </Dropdown.Item>
+            </Dropdown>
+            <Button
+              size="xs"
+              onClick={() => {
+                setFilter({});
+              }}
+            >
+              Làm mới bộ lọc
+            </Button>
+          </div>
         </div>
         {/* results */}
         <div className="mt-5">
@@ -194,6 +160,18 @@ export default function Destination() {
           )}
         </div>
       </div>
+      <SelectAddress
+        openModal={openModalAddress}
+        setOpenModal={setOpenModalAddress}
+        filter={filter}
+        setFilter={setFilter}
+      />
+      <SelectCategory
+        openModal={openModalCategory}
+        setOpenModal={setOpenModalCategory}
+        filter={filter}
+        setFilter={setFilter}
+      />
     </div>
   );
 }
