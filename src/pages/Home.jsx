@@ -24,7 +24,7 @@ export default function Home() {
             nhất với bạn dự vào trí tuệ nhân tạo. Tất cả chỉ với một cú nhấp
             chuột!
           </p>
-          <Link to="/destination" className="flex justify-center">
+          <Link to="/trip/create" className="flex justify-center">
             <Button>Khám Phá Ngay</Button>
           </Link>
         </div>

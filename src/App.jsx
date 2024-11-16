@@ -18,6 +18,7 @@ import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
+import CreateTrip from "./pages/CreateTrip";
 
 function App() {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ function App() {
 
             <Route element={<PrivateRoute />}>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/trip/create" element={<CreateTrip />} />
             </Route>
 
             <Route element={<AdminPrivateRoute />}>

@@ -105,7 +105,7 @@ export default function Header() {
               Tra cứu điểm đến
             </Navbar.Link>
           </Link>
-          <Link to="/generate-trip" className="text-lg font-semibold">
+          <Link to="/trip/create" className="text-lg font-semibold">
             <Navbar.Link active={path === "/generate-trip"} as="div">
               AI tư vấn
             </Navbar.Link>
