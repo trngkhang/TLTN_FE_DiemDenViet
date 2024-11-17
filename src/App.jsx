@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
 import CreateTrip from "./pages/CreateTrip";
+import ViewTrip from "./pages/ViewTrip";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/destination" element={<Destination />} />
             <Route path="/destination/:id" element={<DestinationDetail />} />
+            <Route path="/trip/:tripId" element={<ViewTrip />} />
 
             <Route element={<PrivateRoute />}>
               <Route path="/profile" element={<Profile />} />

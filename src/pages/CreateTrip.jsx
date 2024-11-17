@@ -115,15 +115,11 @@ export default function CreateTrip() {
               <div
                 key={item.id}
                 className={`p-4 border rounded-lg cursor-pointer hover:shadow-xl ${
-                  formData?.traveler ===
-                    item.title + " (" + item.description + ")" &&
+                  formData?.traveler === item.title &&
                   "border border-black bg-gray-100"
                 }`}
                 onClick={() => {
-                  handleInputChange(
-                    "traveler",
-                    item.title + " (" + item.description + ")"
-                  );
+                  handleInputChange("traveler", item.title);
                 }}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
@@ -142,15 +138,11 @@ export default function CreateTrip() {
               <div
                 key={item.id}
                 className={`p-4 border rounded-lg cursor-pointer hover:shadow-xl ${
-                  formData?.budget ===
-                    item.title + " (" + item.description + ")" &&
+                  formData?.budget === item.title &&
                   "border border-black bg-gray-100"
                 }`}
                 onClick={() => {
-                  handleInputChange(
-                    "budget",
-                    item.title + " (" + item.description + ")"
-                  );
+                  handleInputChange("budget", item.title);
                 }}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
