@@ -8,8 +8,8 @@ export default function DeleteConfirmModal({
   itemId,
 }) {
   const confirmDelete = () => {
-    handleDelete(itemId); 
-    setOpenModalDelete(false);  
+    handleDelete(itemId);
+    setOpenModalDelete(false);
   };
 
   return (

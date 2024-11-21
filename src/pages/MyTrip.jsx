@@ -9,7 +9,9 @@ export default function MyTrip() {
 
   const getUserTrips = async () => {
     try {
-      const res = await fetch(`${envVar.api_url}/trip?userId=${user._id}`);
+      const res = await fetch(
+        `${envVar.api_url}/trip?userId=${user._id}&isDeleted=false`
+      );
       const data = await res.json();
       if (res.ok) {
         setUserTrips(data.trips);

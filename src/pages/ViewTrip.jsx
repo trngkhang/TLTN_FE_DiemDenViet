@@ -4,6 +4,7 @@ import envVar from "../utils/envVar";
 import InfoSession from "../components/view-trip/InfoSession";
 import Hotels from "../components/view-trip/Hotels";
 import PlacesToVisit from "../components/view-trip/PlacesToVisit";
+import ViewTripAction from "../components/view-trip/ViewTripAction";
 
 export default function ViewTrip() {
   const { tripId } = useParams();
@@ -34,6 +35,7 @@ export default function ViewTrip() {
       <Hotels hotels={trip?.data?.hotelOptions} />
       {/* daily plan */}
       <PlacesToVisit itinerary={trip?.data?.itinerary} />
+      <ViewTripAction itemId={tripId}/>
     </div>
   );
 }
