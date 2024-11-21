@@ -74,6 +74,9 @@ export default function Header() {
               <Link to="/profile">
                 <Dropdown.Item>Tài khoản</Dropdown.Item>
               </Link>
+              <Link to="/trip/mytrip">
+                <Dropdown.Item>Chuyến đi đã tạo</Dropdown.Item>
+              </Link>
               {user.isAdmin && (
                 <Link to="/dashboard">
                   <Dropdown.Item>Quản lý</Dropdown.Item>

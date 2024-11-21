@@ -8,7 +8,7 @@ export default function InfoSession({ selection }) {
       />
       <div className="my-5 flex flex-col gap-2">
         <h2 className="font-bold text-2xl">{selection?.location}</h2>
-        <div className="hidden sm:flex gap-5">
+        <div className=" flex gap-5">
           <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">
             📅 {selection?.noOfDay} Ngày
           </h2>
