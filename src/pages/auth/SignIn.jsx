@@ -1,9 +1,9 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import envVar from "../../utils/envVar";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slice/userSlice";
+import AuthService from "../../services/AuthService";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,45 +14,33 @@ export default function SignIn() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${envVar.api_url}/auth/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message);
-        setLoading(false);
-        return;
-      }
-      if (res.ok) {
-        setLoading(false);
-        dispath(login(data));
-        navigate("/");
-      }
+      const res = await AuthService.signIn(formData); 
+      dispatch(login(res.data));
+      navigate("/");
     } catch (error) {
+      setError(error.message || "Có lỗi xảy ra");
+    } finally {
       setLoading(false);
-      return setError(error.message);
     }
   };
+
   return (
-    <div className=" justify-center">
+    <div className="justify-center">
       <h1 className="text-center text-5xl font-bold mt-5">ĐĂNG NHẬP</h1>
       <form
         className="flex max-w-md flex-col gap-4 mx-auto my-7"

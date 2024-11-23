@@ -1,14 +1,14 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import envVar from "../../utils/envVar";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slice/userSlice";
+import AuthService from "../../services/AuthService";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name,
+    name: "",
     username: "",
     password: "",
     repeatPassword: "",
@@ -16,11 +16,12 @@ export default function SignUp() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -28,42 +29,30 @@ export default function SignUp() {
         e.target.id === "name" ? e.target.value : e.target.value.trim(),
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     if (formData.password !== formData.repeatPassword) {
       setLoading(false);
       return setError("Mật khẩu không trùng khớp.");
     }
+
     try {
-      const res = await fetch(`${envVar.api_url}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message);
-        setLoading(false);
-        return;
-      }
-      if (res.ok) {
-        setLoading(false);
-        dispath(login(data));
-        navigate("/");
-      }
+      const res = await AuthService.signUp(formData);
+      dispatch(login(res.data));
+      navigate("/");
     } catch (error) {
+      setError(error.message || "Có lỗi xảy ra.");
+    } finally {
       setLoading(false);
-      return setError(error.message);
     }
   };
 
   return (
-    <div className=" justify-center">
+    <div className="justify-center">
       <h1 className="text-center text-5xl font-bold mt-5">ĐĂNG KÝ</h1>
       <form
         className="flex max-w-md flex-col gap-4 mx-auto my-7"

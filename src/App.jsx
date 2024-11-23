@@ -21,13 +21,14 @@ import UpdateDestination from "./pages/destination/UpdateDestination";
 import CreateTrip from "./pages/trip/CreateTrip";
 import ViewTrip from "./pages/trip/ViewTrip";
 import MyTrip from "./pages/trip/MyTrip";
+import AuthService from "./services/AuthService";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userFromToken = await getUserByToken();
+      const userFromToken = await AuthService.getUserByToken();
       dispatch(setUser(userFromToken));
     };
 

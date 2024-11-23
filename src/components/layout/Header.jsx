@@ -1,17 +1,11 @@
-import {
-  Button,
-  Navbar,
-  Drawer,
-  Sidebar,
-  Dropdown,
-  Avatar,
-} from "flowbite-react";
+import { Button, Navbar, Dropdown, Avatar } from "flowbite-react";
 import Brand from "../common/Brand";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import envVar from "../../utils/envVar";
 import { logout } from "../../redux/slice/userSlice";
+import AuthService from "../../services/AuthService";
+import HeaderDrawer from "../common/HeaderDrawer";
 
 export default function Header() {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false); // Set default to false
@@ -22,14 +16,8 @@ export default function Header() {
 
   const handleSignOut = async () => {
     try {
-      const res = await fetch(`${envVar.api_url}/auth/signout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (res.ok) {
-        return dispatch(logout());
-      }
-      console.log(await res.json().message);
+      const res = await AuthService.signOut();
+      return dispatch(logout());
     } catch (error) {
       console.log(error.message);
     }
@@ -125,53 +113,3 @@ export default function Header() {
     </div>
   );
 }
-
-const HeaderDrawer = ({ isOpenDrawer, setIsOpenDrawer, path }) => {
-  const handleClose = () => setIsOpenDrawer(false);
-
-  return (
-    <Drawer open={isOpenDrawer} onClose={handleClose}>
-      <Drawer.Header title="Điểm Đến Việt" />
-      <Drawer.Items>
-        <Sidebar
-          aria-label="Sidebar with multi-level dropdown example"
-          className="[&>div]:bg-transparent [&>div]:p-0"
-        >
-          <div className="flex h-full flex-col justify-between py-2">
-            <Sidebar.Items>
-              <Sidebar.ItemGroup>
-                <Link to="/">
-                  <Sidebar.Item
-                    active={path === "/"}
-                    as="div"
-                    onClick={handleClose}
-                  >
-                    Home
-                  </Sidebar.Item>
-                </Link>
-                <Link to="/destination">
-                  <Sidebar.Item
-                    active={path === "/destination"}
-                    as="div"
-                    onClick={handleClose}
-                  >
-                    Tra cứu điểm đến
-                  </Sidebar.Item>
-                </Link>
-                <Link to="/generate-trip">
-                  <Sidebar.Item
-                    active={path === "/generate-trip"}
-                    as="div"
-                    onClick={handleClose}
-                  >
-                    AI tư vấn
-                  </Sidebar.Item>
-                </Link>
-              </Sidebar.ItemGroup>
-            </Sidebar.Items>
-          </div>
-        </Sidebar>
-      </Drawer.Items>
-    </Drawer>
-  );
-};
