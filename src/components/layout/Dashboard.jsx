@@ -8,6 +8,8 @@ import DashProvince from "../../pages/dashboard/DashProvince";
 import DashDestination from "../../pages/dashboard/DashDestination";
 import DashDistrict from "../../pages/dashboard/DashDistrict";
 import DashWard from "../../pages/dashboard/DashWard";
+import DashCategory from "../../pages/dashboard/DashCategory";
+import DashSubcategory from "../../pages/dashboard/DashSubcategory";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -75,6 +77,8 @@ export default function Dashboard() {
         {tab === "province" && <DashProvince />}
         {tab === "district" && <DashDistrict />}
         {tab === "ward" && <DashWard />}
+        {tab === "category" && <DashCategory />}
+        {tab === "subcategory" && <DashSubcategory />}
         {tab === "destination" && <DashDestination />}
       </div>
     </div>

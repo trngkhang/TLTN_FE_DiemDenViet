@@ -18,11 +18,7 @@ class HttpClient {
         body: body ? JSON.stringify(body) : null,
         credentials: "include",
       });
-
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Có lỗi xảy ra");
-      }
       return data;
     } catch (error) {
       throw error; // Để service quản lý lỗi

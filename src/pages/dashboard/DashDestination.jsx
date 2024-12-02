@@ -1,51 +1,78 @@
-import { Table } from "flowbite-react";
+import { Button, Label, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import envVar from "../../utils/envVar";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
+import Pagination from "@mui/material/Pagination";
 import { Link } from "react-router-dom";
+import DestinationService from "../../services/DestinationService";
+import SelectAddress3 from "../../components/address/SelectAddress3";
+import SelectCategory from "../../components/destination/search-destination/SelectCategory";
+import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
 
 export default function DashDestination() {
   const [data, setData] = useState([]);
-  const [filterText, setFilterText] = useState("");
+  const [filter, setFilter] = useState({});
+  const [page, setPage] = useState(1); // Trang hiện tại
+  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+  const limit = 20; // Số mục trên mỗi trang
+  const [deleteItemId, setDeleteItemId] = useState("");
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    setPage(1);
+  }, [filter]);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    fetchData(page);
+  }, [page, filter]);
+
+  const fetchData = async (page) => {
     try {
-      const response = await fetch(`${envVar.api_url}/destination`);
-      const result = await response.json();
-      setData(result.destinations);
+      const queryParams = new URLSearchParams({
+        categoryId: filter?.category?.categoryId || "",
+        subcategoryId: filter?.category?.subcategoryId || "",
+        provinceId: filter?.provinceId || "",
+        districtId: filter?.districtId || "",
+        wardId: filter?.wardId || "",
+        page,
+        limit,
+      }).toString();
+      const res = await DestinationService.gets(queryParams);
+      setData(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / limit));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
 
-  const filteredData = data.filter((item) => {
-    return (
-      item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.introduce.toLowerCase().includes(filterText.toLowerCase())
-    );
-  });
-
+  const handlePageChange = (event, value) => {
+    setPage(value); // Cập nhật trang hiện tại
+  };
+  const handleDelete = async (id) => {
+    try {
+      await DestinationService.delete(id);
+      setDeleteItemId(null);
+      fetchData();
+    } catch (error) {
+      console.log("Lỗi khi xóa:", error);
+    }
+  };
+  console.log(totalPages);
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
       <div className="flex justify-between items-center mb-4">
-        <Link
-          to="/destination/create"
-          className="text-blue-500 font-semibold p-2"
-        >
-          Tạo mới
+        <div className="flex flex-wrap gap-3">
+          <div>
+            <Label>Địa chỉ</Label>
+            <SelectAddress3 formData={filter} setFormData={setFilter} />
+          </div>
+          <div>
+            <Label>Loại</Label>
+            <SelectCategory formData={filter} setFormData={setFilter} />
+          </div>
+        </div>
+        <Link to="/destination/create">
+          <Button>Tạo mới</Button>
         </Link>
-        <input
-          type="text"
-          placeholder="Tìm kiếm..."
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
-          className="border border-gray-300 rounded p-2"
-        />
       </div>
       <div className="overflow-x-auto">
         <Table>
@@ -57,8 +84,8 @@ export default function DashDestination() {
             <Table.HeadCell>Tùy chọn</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {filteredData && filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
+            {data && data.length > 0 ? (
+              data.map((item, index) => (
                 <Table.Row key={index} className="justify-self-center">
                   <Table.Cell>
                     <Link
@@ -92,7 +119,7 @@ export default function DashDestination() {
                     </Link>
                     <button
                       className="text-red-500 font-semibold hover:underline"
-                      onClick={() => openDeleteModal(item._id)}
+                      onClick={() => setDeleteItemId(item._id)}
                     >
                       Xóa
                     </button>
@@ -108,7 +135,21 @@ export default function DashDestination() {
             )}
           </Table.Body>
         </Table>
+        <Pagination
+          count={totalPages || 1} // Tổng số trang
+          page={page} // Trang hiện tại
+          onChange={handlePageChange} // Hàm thay đổi trang
+          className="flex justify-center py-5"
+          color="primary"
+        />
       </div>
+      {deleteItemId && (
+        <DeleteConfirmModal
+          itemId={deleteItemId}
+          handleDelete={handleDelete}
+          onCLose={() => setDeleteItemId(null)} // Close modal after delete
+        />
+      )}
     </div>
   );
 }

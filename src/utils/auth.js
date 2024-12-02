@@ -6,10 +6,10 @@ export const getUserByToken = async () => {
       credentials: "include",
     });
     const data = await res.json();
-    if (res.ok) {
+    if (res.status) {
       return { user: data, isAuthenticated: true };
     }
-    if (!res.ok) {
+    if (!res.status) {
       return { user: null, isAuthenticated: false };
     }
   } catch (error) {

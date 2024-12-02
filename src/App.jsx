@@ -7,10 +7,9 @@ import Footer from "./components/layout/Footer";
 import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { getUserByToken } from "./utils/auth";
+import { useDispatch } from "react-redux"; 
 import { setUser } from "./redux/slice/userSlice";
-import Destination from "./pages/destination/Destination";
+import DestinationSearch from "./pages/destination/DestinationSearch";
 import DestinationDetail from "./pages/destination/DestinationDetail";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -28,7 +27,7 @@ function App() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userFromToken = await AuthService.getUserByToken();
+      const userFromToken = await AuthService.getUserByToken(); 
       dispatch(setUser(userFromToken));
     };
 
@@ -44,7 +43,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
-            <Route path="/destination" element={<Destination />} />
+            <Route path="/destination" element={<DestinationSearch />} />
             <Route path="/destination/:id" element={<DestinationDetail />} />
             <Route path="/trip/:tripId" element={<ViewTrip />} />
 

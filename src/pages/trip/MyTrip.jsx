@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
-import envVar from "../../utils/envVar";
+import { useSelector } from "react-redux"; 
 import { useEffect, useState } from "react";
 import UserTripCardItem from "../../components/trip/user-trip/UserTripCardItem";
+import TripService from "../../services/TripService";
 
 export default function MyTrip() {
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -9,12 +9,14 @@ export default function MyTrip() {
 
   const getUserTrips = async () => {
     try {
-      const res = await fetch(
-        `${envVar.api_url}/trip?userId=${user._id}&isDeleted=false`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setUserTrips(data.trips);
+      const queryParams = new URLSearchParams({
+        userId: user._id,
+        isDeleted: false,
+      }).toString();
+      const res = await TripService.gets(queryParams);
+
+      if (res.status) {
+        setUserTrips(res.data.trips);
       }
     } catch (error) {
       console.log(error.message);

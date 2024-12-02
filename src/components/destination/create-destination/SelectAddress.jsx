@@ -1,6 +1,8 @@
 import { Button, Modal, Select, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
-import envVar from "../../../utils/envVar";
+import ProvinceService from "../../../services/ProvinceService";
+import DistrictService from "../../../services/DistrictService";
+import WardService from "../../../services/WardService";
 
 export default function SelectAddress({
   openModal,
@@ -11,7 +13,6 @@ export default function SelectAddress({
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-
   // State lưu chọn địa chỉ
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
@@ -31,10 +32,10 @@ export default function SelectAddress({
   // Lấy danh sách tỉnh/thành
   useEffect(() => {
     const fetchProvinces = async () => {
-      const res = await fetch(`${envVar.api_url}/province?isDeleted=false`);
-      const data = await res.json();
-      if (res.ok) {
-        setProvinces(data.provinces);
+      const queryParams = new URLSearchParams({ isDeleted: false }).toString();
+      const res = await ProvinceService.gets(queryParams);
+      if (res.status) {
+        setProvinces(res.data.provinces);
       }
     };
     fetchProvinces();
@@ -44,14 +45,15 @@ export default function SelectAddress({
   useEffect(() => {
     const fetchDistricts = async () => {
       if (!selectedProvince) return;
-      const res = await fetch(
-        `${envVar.api_url}/district?isDeleted=false&provinceId=${selectedProvince}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setDistricts(data.districts);
+      const queryParams = new URLSearchParams({
+        isDeleted: false,
+        provinceId: selectedProvince,
+      }).toString();
+      const res = await DistrictService.gets(queryParams);
+      if (res.status) {
+        setDistricts(res.data.districts);
         setWards([]); // Xóa danh sách phường/xã cũ khi tỉnh/thành thay đổi
-        setSelectedWard(null); // Reset selectedWard khi tỉnh/thành thay đổi
+        setSelectedWard(""); // Reset selectedWard khi tỉnh/thành thay đổi
       }
     };
     fetchDistricts();
@@ -61,12 +63,13 @@ export default function SelectAddress({
   useEffect(() => {
     const fetchWards = async () => {
       if (!selectedDistrict) return;
-      const res = await fetch(
-        `${envVar.api_url}/ward?isDeleted=false&districtId=${selectedDistrict}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setWards(data.wards);
+      const queryParams = new URLSearchParams({
+        isDeleted: false,
+        districtId: selectedDistrict,
+      }).toString();
+      const res = await WardService.gets(queryParams);
+      if (res.status) {
+        setWards(res.data.wards);
       }
     };
     fetchWards();
@@ -109,7 +112,11 @@ export default function SelectAddress({
           <Select
             id="province"
             value={selectedProvince || ""}
-            onChange={(e) => setSelectedProvince(e.target.value)}
+            onChange={(e) => {
+              setSelectedProvince(e.target.value);
+              setSelectedDistrict("");
+              setSelectedWard("");
+            }}
           >
             <option value="">Chọn Tỉnh/Thành phố</option>
             {provinces.map((province) => (
@@ -124,7 +131,10 @@ export default function SelectAddress({
           <Select
             id="district"
             value={selectedDistrict || ""}
-            onChange={(e) => setSelectedDistrict(e.target.value)}
+            onChange={(e) => {
+              setSelectedDistrict(e.target.value);
+              setSelectedWard("");
+            }}
             disabled={!selectedProvince} // Disable khi chưa chọn Tỉnh/Thành phố
           >
             <option value="">Chọn Quận/Huyện</option>

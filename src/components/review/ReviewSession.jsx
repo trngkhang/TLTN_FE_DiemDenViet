@@ -1,79 +1,84 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import envVar from "../../utils/envVar";
 import Review from "./Review";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Accordion, Alert, Button } from "flowbite-react";
 import { Rating } from "@mui/material";
-
-var totalReviews = 0;
+import ReviewService from "../../services/ReviewService";
 
 export default function ReviewSession({ destinationId }) {
   const [reviews, setReviews] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  const [newReview, setNewReview] = useState({
-    rating: 5,
-    comment: "",
-  });
-  const [reviewError, setReviewError] = useState("");
+  const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [reviewError, setReviewError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [totalReviews, setTotalReviews] = useState(0);
+
+  const { user } = useSelector((state) => state.user);
+
+  const fetchReviews = useCallback(
+    async (startIndex = 0, append = false) => {
+      try {
+        const queryParams = new URLSearchParams({
+          destinationId,
+          startIndex,
+          limit: 6,
+        }).toString();
+
+        const res = await ReviewService.gets(queryParams);
+
+        if (res.status) {
+          setTotalReviews(res.data.totalReviews);
+          setReviews((prevReviews) =>
+            append ? [...prevReviews, ...res.data.reviews] : res.data.reviews
+          );
+          setCurrentIndex(startIndex);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    },
+    [destinationId]
+  );
 
   useEffect(() => {
-    const fetchReview = async () => {
-      const res = await fetch(
-        `${envVar.api_url}/review?destinationId=${destinationId}&limit=6&startIndex=${currentIndex}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        totalReviews = data.totalReviews;
-        setReviews(data.reviews);
-      }
-    };
-    fetchReview();
-  }, [destinationId]);
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newReview.comment.length === 0 || newReview.comment.length > 500) {
+
+    if (!newReview.comment.trim() || newReview.comment.length > 500) {
       setReviewError("Đánh giá phải ít hơn 500 kí tự.");
       return;
     }
 
-    const reviewData = {
-      rating: newReview.rating,
-      comment: newReview.comment,
-      userId: user._id,
-      destinationId: destinationId,
-    };
-
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${envVar.api_url}/review`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reviewData),
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
+      const reviewData = {
+        ...newReview,
+        userId: user._id,
+        destinationId,
+      };
+
+      const res = await ReviewService.post(reviewData);
+
+      if (res.status) {
         setNewReview({ rating: 5, comment: "" });
         setReviewError(null);
         setReviews((prevReviews) => [
-          { ...data, userId: { name: user.name, avatar: user.avatar } },
+          { ...res.data, userId: { name: user.name, avatar: user.avatar } },
           ...prevReviews,
         ]);
+        setTotalReviews((prevTotal) => prevTotal + 1);
       } else {
-        setReviewError(data.message || "Lỗi tạo đánh giá.");
+        setReviewError(res.data.message || "Lỗi tạo đánh giá.");
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      setReviewError(error.message);
+      setReviewError("Có lỗi xảy ra khi gửi đánh giá.");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,29 +86,14 @@ export default function ReviewSession({ destinationId }) {
 
   const loadMoreReviews = async () => {
     setLoadingMore(true);
-    try {
-      const res = await fetch(
-        `${
-          envVar.api_url
-        }/review?destinationId=${destinationId}&limit=6&startIndex=${
-          currentIndex + 6
-        }`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setReviews((prevReviews) => [...prevReviews, ...data.reviews]);
-        setCurrentIndex((prevIndex) => prevIndex + 6);
-      }
-    } catch (error) {
-      console.error("Error loading more reviews:", error);
-    } finally {
-      setLoadingMore(false);
-    }
+    await fetchReviews(currentIndex + 6, true);
+    setLoadingMore(false);
   };
 
   return (
     <div className="max-w-2xl mx-auto">
       <h3 className="text-xl font-semibold text-center">Đánh giá</h3>
+
       {user ? (
         <div>
           <div className="text-sm flex flex-row gap-1 items-center">
@@ -115,52 +105,49 @@ export default function ReviewSession({ destinationId }) {
               @{user.name}
             </Link>
           </div>
-          <div>
-            <form
-              onSubmit={handleSubmit}
-              className="rounded-md border border-teal-500 p-3 mt-4"
-            >
-              <Rating
-                name="simple-controlled"
-                value={newReview.rating}
-                onChange={(e, newValue) => {
-                  setNewReview({ ...newReview, rating: newValue });
-                }}
-              />
-              <textarea
-                rows="3"
-                maxLength="500"
-                value={newReview.comment}
-                onChange={(e) =>
-                  setNewReview({ ...newReview, comment: e.target.value })
-                }
-                placeholder="Viết đánh giá của bạn..."
-                className="w-full rounded-md border-gray-400 text-sm"
-              />
-              <div className="flex justify-between items-center mt-2">
-                <p className="text-gray-400 text-sm">
-                  {500 - newReview.comment.length} kí tự còn lại...
-                </p>
-                <Button
-                  gradientDuoTone="purpleToBlue"
-                  className="p-0"
-                  type="submit"
-                  disabled={!newReview.comment || reviewError || isSubmitting}
-                >
-                  {isSubmitting ? "Đang gửi..." : "Đánh giá"}
-                </Button>
-              </div>
-              {reviewError && (
-                <Alert color="failure" className="mt-5">
-                  {reviewError}
-                </Alert>
-              )}
-            </form>
-          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-md border border-teal-500 p-3 mt-4"
+          >
+            <Rating
+              name="simple-controlled"
+              value={newReview.rating}
+              onChange={(e, newValue) =>
+                setNewReview((prev) => ({ ...prev, rating: newValue }))
+              }
+            />
+            <textarea
+              rows="3"
+              maxLength="500"
+              value={newReview.comment}
+              onChange={(e) =>
+                setNewReview((prev) => ({ ...prev, comment: e.target.value }))
+              }
+              placeholder="Viết đánh giá của bạn..."
+              className="w-full rounded-md border-gray-400 text-sm"
+            />
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-gray-400 text-sm">
+                {500 - newReview.comment.length} kí tự còn lại...
+              </p>
+              <Button
+                gradientDuoTone="purpleToBlue"
+                type="submit"
+                disabled={!newReview.comment.trim() || isSubmitting}
+              >
+                {isSubmitting ? "Đang gửi..." : "Đánh giá"}
+              </Button>
+            </div>
+            {reviewError && (
+              <Alert color="failure" className="mt-5">
+                {reviewError}
+              </Alert>
+            )}
+          </form>
         </div>
       ) : (
         <p>
-          Đăng nhập đề đánh giá. <Link to="/signin">Đăng nhập</Link>
+          Đăng nhập để đánh giá. <Link to="/signin">Đăng nhập</Link>
         </p>
       )}
 
@@ -175,15 +162,14 @@ export default function ReviewSession({ destinationId }) {
             </div>
           </Accordion.Title>
           <Accordion.Content>
-            <div>
-              {reviews.length === 0 ? (
-                <p>Chưa có đánh giá nào.</p>
-              ) : (
-                reviews.map((review, index) => (
-                  <Review key={index} review={review} />
-                ))
-              )}
-            </div>
+            {reviews.length === 0 ? (
+              <p>Chưa có đánh giá nào.</p>
+            ) : (
+              reviews.map((review, index) => (
+                <Review key={index} review={review} />
+              ))
+            )}
+
             {reviews.length < totalReviews && (
               <div className="flex justify-center mt-5">
                 <button

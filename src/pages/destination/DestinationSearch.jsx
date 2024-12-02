@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Dropdown } from "flowbite-react";
-import envVar from "../../utils/envVar";
 import DestinationCard from "../../components/destination/DestinationCard";
-import SelectAddress from "../../components/destination/search-destination/SelectAddress";
-import { HiOutlineArrowRight } from "react-icons/hi";
 import SelectCategory from "../../components/destination/search-destination/SelectCategory";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
+import DestinationService from "../../services/DestinationService";
+import SelectAddress3 from "../../components/address/SelectAddress3";
 
-export default function Destination() {
+export default function DestinationSearch() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({});
@@ -16,7 +15,6 @@ export default function Destination() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const itemsPerPage = 12; // hoặc giá trị khác tùy ý
-  const [openModalAddress, setOpenModalAddress] = useState(false);
   const [openModalCategory, setOpenModalCategory] = useState(false);
 
   const handleSearch = async () => {
@@ -25,20 +23,17 @@ export default function Destination() {
       ...(filter.provinceId && { provinceId: filter.provinceId }),
       ...(filter.districtId && { districtId: filter.districtId }),
       ...(filter.wardId && { wardId: filter.wardId }),
-      ...(filter.categoryId && { categoryId: filter.categoryId }),
-      ...(filter.subcategoryId && { subcategoryId: filter.subcategoryId }),
+      ...(filter?.category?.categoryId && { categoryId: filter.category.categoryId }),
+      ...(filter?.category?.subcategoryId && { subcategoryId: filter.category.subcategoryId }),
       ...(filter.sortBy && { sortBy: filter.sortBy }),
-      startIndex: (currentPage - 1) * itemsPerPage,
+      page: currentPage,
       limit: itemsPerPage,
     }).toString();
     try {
-      const res = await fetch(`${envVar.api_url}/destination?${queryParams}`, {
-        method: "GET",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setDestinations(data.destinations);
-        setTotalPages(Math.ceil(data.totalDestinations / itemsPerPage)); // Cập nhật số trang tổng
+      const res = await DestinationService.gets(queryParams);
+      if (res.status) {
+        setDestinations(res.data.data);
+        setTotalPages(Math.ceil(res.data.total / itemsPerPage)); // Cập nhật số trang tổng
       }
     } catch (error) {
       console.log(error.message);
@@ -100,14 +95,13 @@ export default function Destination() {
           </div>
           <div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center py-3">
-              <Button color="light" onClick={() => setOpenModalAddress(true)}>
-                Chọn địa chỉ
-                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button color="light" onClick={() => setOpenModalCategory(true)}>
-                Chọn loại điểm đến
-                <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <SelectAddress3 formData={filter} setFormData={setFilter} />
+              <SelectCategory
+                openModal={openModalCategory}
+                setOpenModal={setOpenModalCategory}
+                formData={filter}
+                setFormData={setFilter}
+              />
             </div>
           </div>
           <div className="flex justify-between">
@@ -123,12 +117,7 @@ export default function Destination() {
                 Lượt xem
               </Dropdown.Item>
             </Dropdown>
-            <Button
-              size="xs"
-              onClick={() => {
-                setFilter({});
-              }}
-            >
+            <Button size="xs" href="/destination">
               Làm mới bộ lọc
             </Button>
           </div>
@@ -160,18 +149,6 @@ export default function Destination() {
           )}
         </div>
       </div>
-      <SelectAddress
-        openModal={openModalAddress}
-        setOpenModal={setOpenModalAddress}
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <SelectCategory
-        openModal={openModalCategory}
-        setOpenModal={setOpenModalCategory}
-        filter={filter}
-        setFilter={setFilter}
-      />
     </div>
   );
 }

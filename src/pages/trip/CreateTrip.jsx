@@ -1,19 +1,14 @@
 import SelectAddress from "../../components/trip/create-trip/SelectAddress";
-import {
-  SelectBudgetOptions,
-  SelectTravelesList,
-} from "../../utils/contant";
+import { SelectBudgetOptions, SelectTravelesList } from "../../utils/contant";
 import { useState } from "react";
 import { Button, TextInput } from "flowbite-react";
-import { HiOutlineArrowRight } from "react-icons/hi";
 import NotificationModal from "../../components/common/NotificationModal";
-import envVar from "../../utils/envVar";
 import { useSelector } from "react-redux";
 import { LoadingModal } from "../../components/common/LoadingModal";
+import TripService from "../../services/TripService";
 
 export default function CreateTrip() {
   const { user, isAuthenticated } = useSelector((state) => state.user);
-  const [openModalAddress, setOpenModalAddress] = useState(false);
   const [formData, setFormData] = useState({});
   const [notification, setNotification] = useState("");
   const [notificationLoading, setNotificationLoading] = useState("");
@@ -47,21 +42,14 @@ export default function CreateTrip() {
       setNotificationLoading(
         "Đang tạo chuyến đi. Vui loàng đợi trong giây lát."
       );
-      const res = await fetch(`${envVar.api_url}/trip/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...formData, userId: user._id }),
-        credentials: "include",
-      });
-      const data = await res.json();
+      const res = await TripService.post({ ...formData, userId: user._id });
+
       setNotificationLoading("");
-      if (res.ok) {
-        setNavigateURL(`/trip/${data._id}`);
+      if (res.status) {
+        setNavigateURL(`/trip/${res.data._id}`);
         setNotification(`Tạo thành công chuyến đi`);
       }
-      if (!res.ok) {
+      if (!res.status) {
         setNotification(`Tạo chuyến đi thất bại`);
       }
     } catch (error) {}
@@ -83,16 +71,8 @@ export default function CreateTrip() {
       <div className="mt-16 grid gap-6">
         <div>
           <h2 className="text-xl my-3 font-medium">Bạn dự định đi đến đâu?</h2>
-          <Button color="light" onClick={() => setOpenModalAddress(true)}>
-            {formData?.location || "Chọn địa chỉ"}
-            <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <SelectAddress
-            openModal={openModalAddress}
-            setOpenModal={setOpenModalAddress}
-            data={formData}
-            setData={setFormData}
-          />
+
+          <SelectAddress data={formData} setData={setFormData} />
         </div>
         <div>
           <h2 className="text-xl my-3 font-medium">

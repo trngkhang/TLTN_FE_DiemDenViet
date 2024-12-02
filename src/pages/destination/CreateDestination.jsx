@@ -1,28 +1,16 @@
 import { TextField } from "@mui/material";
 import { Alert, Button } from "flowbite-react";
-import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import OpeningTime from "../../components/destination/create-destination/OpeningTime";
+import { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import { IoIosArrowForward } from "react-icons/io";
-import SelectCategory from "../../components/destination/create-destination/SelectCategory";
+import SelectCategory from "../../components/destination/search-destination/SelectCategory";
 import UploadImage from "../../components/destination/create-destination/UploadImage";
 import SelectAddress from "../../components/destination/create-destination/SelectAddress";
-import envVar from "../../utils/envVar";
-import { useNavigate } from "react-router-dom";
 import NotificationModal from "../../components/common/NotificationModal";
-import { app } from "../../utils/firebase";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import QillDestination from "../../components/destination/QillDestination";
+import DestinationService from "../../services/DestinationService";
+import SelectTimeOpen from "../../components/destination/SelectTimeOpen";
 
 export default function CreateDestination() {
-  const navigate = useNavigate();
-  const quillRef = useRef(null); // Quill reference to access the editor
   const [formData, setFormData] = useState({
     name: "",
     introduce: "",
@@ -33,100 +21,23 @@ export default function CreateDestination() {
     openingTime: [],
     description: "",
   });
-  const [openingModal, setOpeningModal] = useState(false);
-  const [openModalCategory, setOpenModalCategory] = useState(false);
   const [openModalAddress, setOpenModalAddress] = useState(false);
   const [publishErorr, setPublishErorr] = useState(null);
   const [notification, setNotification] = useState(null);
   const [navigateURL, setNavigateURL] = useState(null);
 
-  // Hàm upload ảnh lên Firebase Storage
-  const handleUploadImage = async (file) => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return reject("No file selected");
-      }
-
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        },
-        (error) => {
-          reject(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
-            resolve(downloadUrl);
-          });
-        }
-      );
-    });
-  };
-
-  // Xử lý chèn ảnh vào ReactQuill
-  const handleImageUpload = async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async () => {
-      const file = input.files[0];
-      try {
-        const imageUrl = await handleUploadImage(file);
-        const quill = quillRef.current.getEditor();
-        const range = quill.getSelection();
-        quill.insertEmbed(range.index, "image", imageUrl);
-      } catch (error) {
-        console.error("Image upload failed:", error);
-      }
-    };
-    input.click();
-  };
-
-  const toolbarOptions = [
-    [
-      { header: [1, 2, 3, 4, 5, 6, false] },
-      { size: ["small", false, "large", "huge"] },
-    ],
-    [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ color: [] }, { background: [] }],
-    ["blockquote", "code-block"],
-    ["link", "video"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["clean"],
-  ];
-
-  const modules = {
-    toolbar: toolbarOptions,
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${envVar.api_url}/destination`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      const res = await DestinationService.post(formData);
+      if (!res.status) {
         setPublishErorr(data.message);
         return;
       }
-      if (res.ok) {
+      if (res.status) {
         setPublishErorr(null);
-        setNavigateURL(`/destination/${data._id}`);
-        setNotification(`Tạo thành công điểm đến ${data.name}`);
+        setNavigateURL(`/destination/${res.data._id}`);
+        setNotification(`Tạo thành công điểm đến ${res.data.name}`);
       }
     } catch (error) {
       setPublishErorr(error.message);
@@ -163,61 +74,22 @@ export default function CreateDestination() {
                 setFormData({ ...formData, ticketPrice: e.target.value })
               }
             />
-            <Button color="light" onClick={() => setOpeningModal(true)}>
-              Chọn giờ hoạt động
-              <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <SelectTimeOpen formData={formData} setFormData={setFormData} />
           </div>
           <Button color="light" onClick={() => setOpenModalAddress(true)}>
             Chọn địa chỉ
             <HiOutlineArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <Button
-            outline
-            color="light"
-            className="hover:border-black rounded-sm"
-            onClick={() => setOpenModalCategory(true)}
-          >
-            {formData?.subcategoryId
-              ? formData.subcategoryName
-              : "Loại điểm đến"}
-            <IoIosArrowForward className="mr-2 h-5 w-5" />
-          </Button>
+          <SelectCategory formData={formData} setFormData={setFormData} />
         </div>
         <UploadImage formData={formData} setFormData={setFormData} />
-
-        {/* ReactQuill editor */}
-        <ReactQuill
-          theme="snow"
-          placeholder="Write something..."
-          required
-          ref={quillRef}
-          modules={modules}
-          onChange={(value) => setFormData({ ...formData, description: value })}
-        />
-        {/* Nút tải ảnh ngoài Quill toolbar */}
-        <Button onClick={handleImageUpload} color="light">
-          Chèn ảnh
-        </Button>
+        <QillDestination formData={formData} setFormData={setFormData} />
 
         {publishErorr && <Alert color="failure">{publishErorr}</Alert>}
         <Button type="submit" gradientDuoTone="greenToBlue">
           Tạo mới điểm đến
         </Button>
       </form>
-
-      <OpeningTime
-        openModal={openingModal}
-        setOpenModal={setOpeningModal}
-        formData={formData}
-        setFormData={setFormData}
-      />
-      <SelectCategory
-        openModal={openModalCategory}
-        setOpenModal={setOpenModalCategory}
-        formData={formData}
-        setFormData={setFormData}
-      />
       <SelectAddress
         openModal={openModalAddress}
         setOpenModal={setOpenModalAddress}

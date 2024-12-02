@@ -6,6 +6,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ReviewSession from "../../components/review/ReviewSession";
 import { Badge } from "flowbite-react";
+import DestinationService from "../../services/DestinationService";
 
 export default function DestinationDetail() {
   const { id } = useParams();
@@ -13,10 +14,9 @@ export default function DestinationDetail() {
 
   useEffect(() => {
     const fetchDestination = async () => {
-      const res = await fetch(`${envVar.api_url}/destination/${id}`);
-      const data = await res.json();
-      if (res.ok) {
-        setDestination(data);
+      const res = await DestinationService.get(id);
+      if (res.status) {
+        setDestination(res.data);
       }
     };
     fetchDestination();
@@ -47,10 +47,6 @@ export default function DestinationDetail() {
               </div>
             </div>
           </div>
-          <p>
-            <span className="font-semibold">Giới thiệu: </span>
-            {destination.introduce}
-          </p>
           <Link
             to={
               "https://www.google.com/maps/search/?api=1&query=" +

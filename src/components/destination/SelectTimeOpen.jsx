@@ -1,12 +1,8 @@
 import { Button, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { HiOutlineArrowRight } from "react-icons/hi";
 
-export default function OpeningTime({
-  openModal,
-  setOpenModal,
-  formData,
-  setFormData,
-}) {
+export default function SelectTimeOpen({ formData, setFormData }) {
   const daysOfWeek = [
     "Thứ hai",
     "Thứ ba",
@@ -16,7 +12,7 @@ export default function OpeningTime({
     "Thứ bảy",
     "Chủ nhật",
   ];
-
+  const [openModal, setOpenModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("all");
 
   // Cập nhật formData khi mở modal
@@ -134,84 +130,94 @@ export default function OpeningTime({
   };
 
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)}>
-      <Modal.Header>Giờ hoạt động</Modal.Header>
-      <Modal.Body>
-        <div>
-          <div className="flex gap-2 mb-4">
-            <Button onClick={handleApplyToAllDays}>
-              Chỉnh sửa tất cả các ngày
-            </Button>
-            <Button onClick={handleApplyToWeekdays}>Chỉnh sửa T2 - T6</Button>
-            <Button onClick={handleApplyToWeekends}>Chỉnh sửa T7 - CN</Button>
-          </div>
-          {formData.openingTime.map((day, index) => (
-            <div key={index} style={{ marginBottom: "1em" }}>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={day.open}
-                  onChange={() => handleToggleDay(index)}
-                  className="mr-2"
-                />
-                {day.day}
-              </label>
-              {day.open && (
-                <div className="ml-4">
-                  <div className="flex items-center mb-2">
-                    <input
-                      type="checkbox"
-                      checked={day.openAllDay}
-                      onChange={() => handleToggleOpenAllDay(index)}
-                      className="mr-2"
-                    />
-                    <span>Mở cửa cả ngày</span>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <input
-                      type="checkbox"
-                      checked={day.closedAllDay}
-                      onChange={() => handleToggleClosedAllDay(index)}
-                      className="mr-2"
-                    />
-                    <span>Đóng cửa cả ngày</span>
-                  </div>
-                  {!day.closedAllDay && !day.openAllDay && (
-                    <>
-                      <label>
-                        Open:
-                        <input
-                          type="time"
-                          value={day.startTime}
-                          onChange={(e) =>
-                            handleTimeChange(index, "startTime", e.target.value)
-                          }
-                        />
-                      </label>
-                      <label>
-                        Close:
-                        <input
-                          type="time"
-                          value={day.endTime}
-                          onChange={(e) =>
-                            handleTimeChange(index, "endTime", e.target.value)
-                          }
-                        />
-                      </label>
-                    </>
-                  )}
-                </div>
-              )}
+    <div>
+      <Button color="light" onClick={() => setOpenModal(true)}>
+        Chọn giờ hoạt động
+        <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+      </Button>
+      <Modal show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal.Header>Giờ hoạt động</Modal.Header>
+        <Modal.Body>
+          <div>
+            <div className="flex gap-2 mb-4">
+              <Button onClick={handleApplyToAllDays}>
+                Chỉnh sửa tất cả các ngày
+              </Button>
+              <Button onClick={handleApplyToWeekdays}>Chỉnh sửa T2 - T6</Button>
+              <Button onClick={handleApplyToWeekends}>Chỉnh sửa T7 - CN</Button>
             </div>
-          ))}
-        </div>
-      </Modal.Body>
-      <Modal.Footer className="justify-end">
-        <Button color="gray" onClick={() => setOpenModal(false)}>
-          Hủy
-        </Button>
-        <Button onClick={() => setOpenModal(false)}>Đồng ý</Button>
-      </Modal.Footer>
-    </Modal>
+            {formData.openingTime.map((day, index) => (
+              <div key={index} style={{ marginBottom: "1em" }}>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={day.open}
+                    onChange={() => handleToggleDay(index)}
+                    className="mr-2"
+                  />
+                  {day.day}
+                </label>
+                {day.open && (
+                  <div className="ml-4">
+                    <div className="flex items-center mb-2">
+                      <input
+                        type="checkbox"
+                        checked={day.openAllDay}
+                        onChange={() => handleToggleOpenAllDay(index)}
+                        className="mr-2"
+                      />
+                      <span>Mở cửa cả ngày</span>
+                    </div>
+                    <div className="flex items-center mb-2">
+                      <input
+                        type="checkbox"
+                        checked={day.closedAllDay}
+                        onChange={() => handleToggleClosedAllDay(index)}
+                        className="mr-2"
+                      />
+                      <span>Đóng cửa cả ngày</span>
+                    </div>
+                    {!day.closedAllDay && !day.openAllDay && (
+                      <>
+                        <label>
+                          Open:
+                          <input
+                            type="time"
+                            value={day.startTime}
+                            onChange={(e) =>
+                              handleTimeChange(
+                                index,
+                                "startTime",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                        <label>
+                          Close:
+                          <input
+                            type="time"
+                            value={day.endTime}
+                            onChange={(e) =>
+                              handleTimeChange(index, "endTime", e.target.value)
+                            }
+                          />
+                        </label>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-end">
+          <Button color="gray" onClick={() => setOpenModal(false)}>
+            Hủy
+          </Button>
+          <Button onClick={() => setOpenModal(false)}>Đồng ý</Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { MdCategory } from "react-icons/md";
+import { FaMapLocationDot } from "react-icons/fa6";
 
 export default function DashSidebar({ setSidebarOpen }) {
   // Nhận setSidebarOpen từ props
@@ -36,48 +37,53 @@ export default function DashSidebar({ setSidebarOpen }) {
               </Sidebar.Item>
             </Link>
           )}
-          {user.isAdmin && (
-            <Link to="/dashboard?tab=region" onClick={handleLinkClick}>
-              <Sidebar.Item active={tab === "region"} icon={FaMap} as="div">
-                Khu vực
-              </Sidebar.Item>
-            </Link>
-          )}
-          {user.isAdmin && (
-            <Link to="/dashboard?tab=province" onClick={handleLinkClick}>
-              <Sidebar.Item active={tab === "province"} icon={FaMap} as="div">
-                Tỉnh thành
-              </Sidebar.Item>
-            </Link>
-          )}
-          {user.isAdmin && (
-            <Link to="/dashboard?tab=district" onClick={handleLinkClick}>
-              <Sidebar.Item active={tab === "district"} icon={FaMap} as="div">
-                Quận huyện
-              </Sidebar.Item>
-            </Link>
-          )}
-          {user.isAdmin && (
-            <Link to="/dashboard?tab=ward" onClick={handleLinkClick}>
-              <Sidebar.Item active={tab === "ward"} icon={FaMap} as="div">
-                Phường xã
-              </Sidebar.Item>
-            </Link>
-          )}
-          {user.isAdmin && (
-            <Link
-              to="/dashboard?tab=destination-type"
-              onClick={handleLinkClick}
-            >
-              <Sidebar.Item
-                active={tab === "destination-type"}
-                icon={MdCategory}
-                as="div"
-              >
-                Loại điểm đến
-              </Sidebar.Item>
-            </Link>
-          )}
+          <Sidebar.Collapse icon={FaMapLocationDot} label="Địa chỉ">
+            {user.isAdmin && (
+              <Link to="/dashboard?tab=province" onClick={handleLinkClick}>
+                <Sidebar.Item active={tab === "province"} icon={FaMap} as="div">
+                  Tỉnh thành
+                </Sidebar.Item>
+              </Link>
+            )}
+            {user.isAdmin && (
+              <Link to="/dashboard?tab=district" onClick={handleLinkClick}>
+                <Sidebar.Item active={tab === "district"} icon={FaMap} as="div">
+                  Quận huyện
+                </Sidebar.Item>
+              </Link>
+            )}
+            {user.isAdmin && (
+              <Link to="/dashboard?tab=ward" onClick={handleLinkClick}>
+                <Sidebar.Item active={tab === "ward"} icon={FaMap} as="div">
+                  Phường xã
+                </Sidebar.Item>
+              </Link>
+            )}
+          </Sidebar.Collapse>
+          <Sidebar.Collapse icon={MdCategory} label="Loại điể đến">
+            {user.isAdmin && (
+              <Link to="/dashboard?tab=category" onClick={handleLinkClick}>
+                <Sidebar.Item
+                  active={tab === "category"}
+                  icon={MdCategory}
+                  as="div"
+                >
+                  Danh mục chính
+                </Sidebar.Item>
+              </Link>
+            )}
+            {user.isAdmin && (
+              <Link to="/dashboard?tab=subcategory" onClick={handleLinkClick}>
+                <Sidebar.Item
+                  active={tab === "subcategory"}
+                  icon={MdCategory}
+                  as="div"
+                >
+                  Danh mục con
+                </Sidebar.Item>
+              </Link>
+            )}
+          </Sidebar.Collapse>
           {user.isAdmin && (
             <Link to="/dashboard?tab=destination" onClick={handleLinkClick}>
               <Sidebar.Item

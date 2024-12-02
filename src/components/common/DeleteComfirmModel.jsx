@@ -2,21 +2,19 @@ import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function DeleteConfirmModal({
-  openModalDelete,
-  setOpenModalDelete,
   handleDelete,
-  itemId,
+  itemId,onCLose
 }) {
   const confirmDelete = () => {
     handleDelete(itemId);
-    setOpenModalDelete(false);
+   // close modal
   };
 
   return (
     <Modal
-      show={openModalDelete}
+      show={true}
       size="md"
-      onClose={() => setOpenModalDelete(false)}
+      onClose={() => onCLose}
       popup
     >
       <Modal.Header />
@@ -30,7 +28,7 @@ export default function DeleteConfirmModal({
             <Button color="failure" onClick={confirmDelete}>
               Xóa
             </Button>
-            <Button color="gray" onClick={() => setOpenModalDelete(false)}>
+            <Button color="gray" onClick={() => onCLose}>
               Quay lại
             </Button>
           </div>

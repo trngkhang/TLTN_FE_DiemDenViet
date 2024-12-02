@@ -66,8 +66,8 @@ export default function Profile() {
         }),
         credentials: "include",
       });
-      const data = await res.json();
-      if (res.ok) {
+
+      if (res.status) {
         setMessage("Thay đổi thành công.");
       } else {
         setMessage(data.message);
@@ -164,19 +164,19 @@ export default function Profile() {
                 />
               </div>
               <div className="flex flex-col gap-4 w-full">
-                <TextField 
+                <TextField
                   label="Tên"
                   name="name"
                   value={editUser.name}
                   onChange={handleInputChange}
                 />
-                <TextField 
+                <TextField
                   label="Tên đăng nhập"
                   name="username"
                   value={editUser.username}
                   onChange={handleInputChange}
                 />
-                <TextField 
+                <TextField
                   label="Mật khẩu mới"
                   name="password"
                   type="password"
