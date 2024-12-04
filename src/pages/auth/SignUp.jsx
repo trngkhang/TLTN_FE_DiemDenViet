@@ -42,6 +42,10 @@ export default function SignUp() {
 
     try {
       const res = await AuthService.signUp(formData);
+      if (!res.status) {
+        setError(res.message);
+        return;
+      }
       dispatch(login(res.data));
       navigate("/");
     } catch (error) {

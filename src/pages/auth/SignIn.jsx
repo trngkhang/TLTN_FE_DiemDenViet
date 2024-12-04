@@ -29,7 +29,11 @@ export default function SignIn() {
     setLoading(true);
     setError("");
     try {
-      const res = await AuthService.signIn(formData); 
+      const res = await AuthService.signIn(formData);
+      if (!res.status) {
+        setError(res.message);
+        return;
+      }
       dispatch(login(res.data));
       navigate("/");
     } catch (error) {
