@@ -24,7 +24,6 @@ export default function DashDestination() {
   const filteredData = data.filter((item) => {
     return (
       item.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.introduce.toLowerCase().includes(filterText.toLowerCase())
     );
   });
 

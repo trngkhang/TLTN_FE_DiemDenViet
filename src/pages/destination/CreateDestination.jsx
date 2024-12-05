@@ -13,7 +13,6 @@ import SelectTimeOpen from "../../components/destination/SelectTimeOpen";
 export default function CreateDestination() {
   const [formData, setFormData] = useState({
     name: "",
-    introduce: "",
     address: {},
     category: {},
     subcategoryName: "",
@@ -56,14 +55,6 @@ export default function CreateDestination() {
             label="Tên điểm đến"
             variant="outlined"
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          <TextField
-            id="introduce"
-            label="Giới thiệu"
-            variant="outlined"
-            onChange={(e) =>
-              setFormData({ ...formData, introduce: e.target.value })
-            }
           />
           <div className="w-full grid grid-cols-2 gap-3">
             <TextField

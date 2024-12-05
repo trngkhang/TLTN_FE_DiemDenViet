@@ -18,7 +18,6 @@ export default function UpdateDestination() {
   // Initialize form data state
   const [formData, setFormData] = useState({
     name: "",
-    introduce: "",
     address: {},
     category: {},
     image: "",
@@ -42,7 +41,6 @@ export default function UpdateDestination() {
         setFormData((prevData) => ({
           ...prevData,
           name: data.name || "",
-          introduce: data.introduce || "",
           address: data.address || {},
           category: {
             categoryId: data.category.categoryId || "",
@@ -106,13 +104,6 @@ export default function UpdateDestination() {
             variant="outlined"
             value={formData.name}
             onChange={(e) => handleFormDataChange("name", e.target.value)}
-          />
-          <TextField
-            id="introduce"
-            label="Giới thiệu"
-            variant="outlined"
-            value={formData.introduce}
-            onChange={(e) => handleFormDataChange("introduce", e.target.value)}
           />
           <div className="w-full grid grid-cols-2 gap-3">
             <TextField
