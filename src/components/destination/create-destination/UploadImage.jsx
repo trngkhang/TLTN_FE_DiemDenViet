@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { app } from "../../../utils/firebase";
 import {
   getDownloadURL,
@@ -8,83 +9,88 @@ import {
 } from "firebase/storage";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { Alert, Button, FileInput } from "flowbite-react";
+import { Alert } from "flowbite-react";
 
 export default function UploadImage({ formData, setFormData }) {
-  const [file, setFile] = useState(null);
-  const [imageFleUploadError, setImageFleUploadError] = useState(null);
-  const [imageFleUploadProgress, setImageFleUploadEProgress] = useState(null);
+  const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
 
-  const handleUploadImage = async () => {
+  const onDrop = (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      handleUploadImage(file);
+    } else {
+      setImageFileUploadError("Invalid file type. Please upload an image.");
+    }
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+    multiple: false,
+  });
+
+  const handleUploadImage = async (file) => {
     try {
-      if (!file) {
-        setImageFleUploadError("Please select an image");
-        return;
-      }
-      setImageFleUploadEProgress(null);
-      setImageFleUploadError(null);
+      setImageFileUploadError(null);
+      setImageFileUploadProgress(null);
       const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.fileName;
+      const fileName = `${new Date().getTime()}-${file.name}`;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageFleUploadEProgress(progress.toFixed(0));
+          setImageFileUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          setImageFleUploadError("Upload Image Failed");
-          setImageFleUploadEProgress(null);
+          setImageFileUploadError("Upload Image Failed");
+          setImageFileUploadProgress(null);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
             setFormData({ ...formData, image: downloadUrl });
-            setImageFleUploadEProgress(null);
-            setImageFleUploadError(null);
+            setImageFileUploadProgress(null);
+            setImageFileUploadError(null);
           });
         }
       );
     } catch (error) {
-      setImageFleUploadError(error.message);
+      setImageFileUploadError(error.message);
     }
   };
+
   return (
     <>
-      <div className="flex flex-row justify-between border-2 border-teal-500 border-dotted p-2">
-        <FileInput
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-        <Button
-          type="button"
-          gradientDuoTone="purpleToBlue"
-          size="sm"
-          outline
-          onClick={handleUploadImage}
-          disabled={imageFleUploadProgress}
-        >
-          {imageFleUploadProgress ? (
-            <CircularProgressbar
-              value={imageFleUploadProgress}
-              text={`${imageFleUploadProgress || 0}%`}
-              className="w-16 h-16"
-            />
-          ) : (
-            "Upload image"
-          )}
-        </Button>
+      <div
+        {...getRootProps()}
+        className="flex flex-col items-center justify-center border-2 border-dashed border-teal-500 p-4 cursor-pointer"
+      >
+        <input {...getInputProps()} />
+        <p className="text-teal-500">
+          Drag and drop an image here, or click to select one
+        </p>
+        {imageFileUploadProgress && (
+          <CircularProgressbar
+            value={imageFileUploadProgress}
+            text={`${imageFileUploadProgress || 0}%`}
+            className="w-16 h-16 mt-2"
+          />
+        )}
       </div>
-      {imageFleUploadError && (
-        <Alert color="failure">{imageFleUploadError}</Alert>
+      {imageFileUploadError && (
+        <Alert color="failure" className="mt-2">
+          {imageFileUploadError}
+        </Alert>
       )}
       {formData.image && (
         <img
           src={formData.image}
-          alt="uploadImg"
-          className="w-full h-60 object-cover"
+          alt="Uploaded"
+          className="w-full h-60 object-cover "
         />
       )}
     </>

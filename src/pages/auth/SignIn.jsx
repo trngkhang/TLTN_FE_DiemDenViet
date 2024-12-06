@@ -100,6 +100,7 @@ export default function SignIn() {
             Đăng ký
           </Link>
         </span>
+        <div>Tài khoản admin: quantrivien - 123456</div>
       </form>
     </div>
   );

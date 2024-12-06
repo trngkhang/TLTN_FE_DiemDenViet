@@ -1,7 +1,7 @@
- import { Button } from "flowbite-react";
-import {  useRef } from "react";
+import { Button } from "flowbite-react";
+import { useRef } from "react";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";     
+import "react-quill/dist/quill.snow.css";
 import CommonService from "../../services/CommonService";
 
 export default function QillDestination({ formData, setFormData }) {
@@ -45,7 +45,7 @@ export default function QillDestination({ formData, setFormData }) {
   };
 
   return (
-    <div>
+    <div className="relative">
       <ReactQuill
         theme="snow"
         placeholder="Write something..."
@@ -56,7 +56,11 @@ export default function QillDestination({ formData, setFormData }) {
         onChange={(value) => setFormData({ ...formData, description: value })}
       />
       {/* Nút tải ảnh ngoài Quill toolbar */}
-      <Button onClick={handleImageUpload} color="light">
+      <Button
+        onClick={handleImageUpload}
+        color="light"
+        className=" absolute right-0 bottom-0"
+      >
         Chèn ảnh
       </Button>
     </div>

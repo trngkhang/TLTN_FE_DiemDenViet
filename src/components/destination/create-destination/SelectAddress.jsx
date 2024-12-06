@@ -69,7 +69,7 @@ export default function SelectAddress({
       }).toString();
       const res = await WardService.gets(queryParams);
       if (res.status) {
-        setWards(res.data.wards);
+        setWards(res.data.data);
       }
     };
     fetchWards();
