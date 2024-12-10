@@ -30,7 +30,7 @@ export default function DestinationSearch() {
       limit: itemsPerPage,
     }).toString();
     try {
-      const res = await DestinationService.gets(queryParams);
+      const res = await DestinationService.search(queryParams);
       if (res.status) {
         setDestinations(res.data.data);
         setTotalPages(Math.ceil(res.data.total / itemsPerPage)); // Cập nhật số trang tổng

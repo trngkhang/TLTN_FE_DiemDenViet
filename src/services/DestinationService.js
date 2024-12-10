@@ -10,6 +10,9 @@ export default class DestinationService {
   static async gets(queryParams) {
     return HttpClient.get(`/destination?${queryParams}`);
   }
+  static async search(queryParams) {
+    return HttpClient.get(`/destination/search?${queryParams}`);
+  }
   static async post(formData) {
     return HttpClient.post("/destination", formData);
   }
