@@ -7,6 +7,9 @@ export default class DistrictService {
   static async gets(queryParams) {
     return HttpClient.get(`/district?${queryParams}`);
   }
+  static async getForSelect(queryParams) {
+    return HttpClient.get(`/district/getforselect?${queryParams}`);
+  }
   static async post(formData) {
     return HttpClient.post("/district", formData);
   }

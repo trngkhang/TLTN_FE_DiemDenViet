@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DistrictService from "../../services/DistrictService"; 
+import DistrictService from "../../services/DistrictService";
 import { Table } from "flowbite-react";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateDistrict from "../../components/district/CreateDistrict";

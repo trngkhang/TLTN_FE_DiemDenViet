@@ -18,10 +18,9 @@ export default function SelectCategory({ formData, setFormData }) {
 
   useEffect(() => {
     const fetchcategories = async () => {
-      const queryParams = new URLSearchParams({ isDeleted: false }).toString();
-      const res = await CategoryService.gets(queryParams);
+      const res = await CategoryService.getForSelect();
       if (res.status) {
-        setcategories(res.data.categories);
+        setcategories(res.data.data);
       }
     };
     fetchcategories();
@@ -30,12 +29,11 @@ export default function SelectCategory({ formData, setFormData }) {
     const fetchsubcategories = async () => {
       if (!selectedCategory) return;
       const queryParams = new URLSearchParams({
-        isDeleted: false,
         categoryId: selectedCategory,
       }).toString();
-      const res = await SubcategoryService.gets(queryParams);
+      const res = await SubcategoryService.getForSelect(queryParams);
       if (res.status) {
-        setSubcategories(res.data.subcategories);
+        setSubcategories(res.data.data);
       }
     };
     fetchsubcategories();

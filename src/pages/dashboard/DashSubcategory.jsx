@@ -17,8 +17,8 @@ export default function DashSubcategory() {
   // Lấy danh sách categories
   const fetchCategories = async () => {
     try {
-      const res = await CategoryService.gets(); // API lấy danh mục cha
-      setCategories(res.data.categories); // Lưu danh mục vào state
+      const res = await CategoryService.getForSelect(); // API lấy danh mục cha
+      setCategories(res.data.data); // Lưu danh mục vào state
     } catch (error) {
       console.log("Lỗi khi fetch danh mục chính:", error);
     }

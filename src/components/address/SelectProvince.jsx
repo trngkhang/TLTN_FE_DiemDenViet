@@ -8,10 +8,9 @@ export default function SelectProvince({ selectedProvince, setSelectedProvince }
 
   useEffect(() => {
     const fetchProvinces = async () => {
-      const queryParams = new URLSearchParams({ isDeleted: false }).toString();
-      const res = await ProvinceService.gets(queryParams);
+      const res = await ProvinceService.getForSelect();
       if (res.status) {
-        setProvinces(res.data.provinces);
+        setProvinces(res.data.data);
       }
     };
     fetchProvinces();

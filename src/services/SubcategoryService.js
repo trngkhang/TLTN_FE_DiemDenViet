@@ -6,6 +6,8 @@ export default class SubcategoryService {
   }
   static async gets(queryParams) {
     return HttpClient.get(`/subcategory?${queryParams}`);
+  }  static async getForSelect(queryParams) {
+    return HttpClient.get(`/subcategory/getforselect?${queryParams}`);
   }
   static async post(formData) {
     return HttpClient.post("/subcategory", formData);

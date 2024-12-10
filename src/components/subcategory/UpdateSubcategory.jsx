@@ -15,13 +15,9 @@ export default function UpdateSubcategory({ item, onCLose }) {
 
   useEffect(() => {
     const fetchcategories = async () => {
-      const queryParams = new URLSearchParams({
-        isDeleted: false,
-        limit: "all",
-      }).toString();
-      const res = await CategoryService.gets(queryParams);
+      const res = await CategoryService.getForSelect();
       if (res.status) {
-        setcategories(res.data.categories);
+        setcategories(res.data.data);
       }
     };
     fetchcategories();

@@ -1,8 +1,8 @@
-// SelectAddress.js
 import { Button, Modal } from "flowbite-react";
 import { useState, useEffect } from "react";
 import SelectProvince from "./SelectProvince";
 import { IoIosArrowForward } from "react-icons/io";
+import ProvinceService from "../../services/ProvinceService";
 
 export default function SelectAddress1({ formData, setFormData }) {
   const [openModal, setOpenModal] = useState(false);

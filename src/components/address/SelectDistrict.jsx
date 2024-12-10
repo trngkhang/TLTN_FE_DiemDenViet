@@ -14,12 +14,11 @@ export default function SelectDistrict({
     const fetchDistricts = async () => {
       if (!selectedProvince) return;
       const queryParams = new URLSearchParams({
-        isDeleted: false,
         provinceId: selectedProvince,
       }).toString();
-      const res = await DistrictService.gets(queryParams);
+      const res = await DistrictService.getForSelect(queryParams);
       if (res.status) {
-        setDistricts(res.data.districts);
+        setDistricts(res.data.data);
       }
     };
     fetchDistricts();

@@ -27,10 +27,9 @@ export default function SelectAddress({
   // Lấy danh sách tỉnh/thành
   useEffect(() => {
     const fetchProvinces = async () => {
-      const queryParams = new URLSearchParams({ isDeleted: false }).toString();
-      const res = await ProvinceService.gets(queryParams);
+      const res = await ProvinceService.getForSelect();
       if (res.status) {
-        setProvinces(res.data.provinces);
+        setProvinces(res.data.data);
       }
     };
     fetchProvinces();
@@ -39,12 +38,11 @@ export default function SelectAddress({
     const fetchDistricts = async () => {
       if (!selectedProvince) return;
       const queryParams = new URLSearchParams({
-        isDeleted: false,
         provinceId: selectedProvince,
       }).toString();
-      const res = await DistrictService.gets(queryParams);
+      const res = await DistrictService.getForSelect(queryParams);
       if (res.status) {
-        setDistricts(res.data.districts);
+        setDistricts(res.data.data);
         setWards([]); // Xóa danh sách phường/xã cũ khi tỉnh/thành thay đổi
         setSelectedWard(""); // Reset selectedWard khi tỉnh/thành thay đổi
       }
@@ -56,10 +54,9 @@ export default function SelectAddress({
     const fetchWards = async () => {
       if (!selectedDistrict) return;
       const queryParams = new URLSearchParams({
-        isDeleted: false,
         districtId: selectedDistrict,
       }).toString();
-      const res = await WardService.gets(queryParams);
+      const res = await WardService.getForSelect(queryParams);
       if (res.status) {
         setWards(res.data.wards);
       }

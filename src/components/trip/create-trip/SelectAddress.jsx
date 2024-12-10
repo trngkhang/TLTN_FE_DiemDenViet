@@ -21,10 +21,8 @@ export default function SelectAddress({ data, setData }) {
   // Lấy danh sách tỉnh/thành
   useEffect(() => {
     const fetchProvinces = async () => {
-      const queryParams = new URLSearchParams({ isDeleted: false }).toString();
-      const res = await ProvinceService.gets(queryParams);
-      if (res.status) {
-        setProvinces(res.data.provinces);
+      const res = await ProvinceService.getForSelect();      if (res.status) {
+        setProvinces(res.data.data);
       }
     };
     fetchProvinces();
@@ -32,13 +30,12 @@ export default function SelectAddress({ data, setData }) {
   useEffect(() => {
     const fetchDistricts = async () => {
       if (!selectedProvince) return;
-      const queryParams = new URLSearchParams({
-        isDeleted: false,
+      const queryParams = new URLSearchParams({ 
         provinceId: selectedProvince,
       }).toString();
-      const res = await DistrictService.gets(queryParams);
+      const res = await DistrictService.getForSelect(queryParams);
       if (res.status) {
-        setDistricts(res.data.districts);
+        setDistricts(res.data.data);
       }
     };
     fetchDistricts();

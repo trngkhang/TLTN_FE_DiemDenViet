@@ -7,6 +7,9 @@ export default class WardService {
   static async gets(queryParams) {
     return HttpClient.get(`/ward?${queryParams}`);
   }
+  static async getForSelect(queryParams) {
+    return HttpClient.get(`/ward/getforselect?${queryParams}`);
+  }
   static async post(formData) {
     return HttpClient.post("/ward", formData);
   }

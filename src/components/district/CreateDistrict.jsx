@@ -6,19 +6,15 @@ import ProvinceService from "../../services/ProvinceService";
 
 export default function CreateDistrict() {
   const [openModal, setOpenModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "",provinceId:"" });
+  const [formData, setFormData] = useState({ name: "", provinceId: "" });
   const [notification, setNotification] = useState(null);
   const [provinces, setcategories] = useState([]);
 
   useEffect(() => {
     const fetchcategories = async () => {
-      const queryParams = new URLSearchParams({
-        isDeleted: false,
-        limit: "all",
-      }).toString();
-      const res = await ProvinceService.gets(queryParams);
+      const res = await ProvinceService.getForSelect();
       if (res.status) {
-        setcategories(res.data.provinces);
+        setcategories(res.data.data);
       }
     };
     fetchcategories();

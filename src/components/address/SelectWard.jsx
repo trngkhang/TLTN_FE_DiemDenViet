@@ -14,10 +14,9 @@ export default function SelectWard({
     const fetchWards = async () => {
       if (!selectedDistrict) return;
       const queryParams = new URLSearchParams({
-        isDeleted: false,
         districtId: selectedDistrict,
       }).toString();
-      const res = await WardService.gets(queryParams);
+      const res = await WardService.getForSelect(queryParams);
 
       if (res.status) {
         setWards(res.data.data);

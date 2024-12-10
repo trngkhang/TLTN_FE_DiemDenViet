@@ -7,6 +7,9 @@ export default class CategoryService {
   static async gets(queryParams) {
     return HttpClient.get(`/category?${queryParams}`);
   }
+  static async getForSelect() {
+    return HttpClient.get(`/category/getforselect`);
+  }
   static async post(formData) {
     return HttpClient.post("/category", formData);
   }

@@ -7,6 +7,9 @@ export default class ProvinceService {
   static async gets(queryParams) {
     return HttpClient.get(`/province?${queryParams}`);
   }
+  static async getForSelect() {
+    return HttpClient.get(`/province/getforselect`);
+  }
   static async post(formData) {
     return HttpClient.post("/province", formData);
   }
