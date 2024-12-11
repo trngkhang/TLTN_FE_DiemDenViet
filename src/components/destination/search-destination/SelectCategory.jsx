@@ -39,7 +39,6 @@ export default function SelectCategory({ formData, setFormData }) {
     fetchsubcategories();
   }, [selectedCategory]);
 
-  // Xử lý khi nhấn nút Xác nhận
   const handleConfirm = () => {
     setFormData({
       ...formData,
@@ -48,9 +47,8 @@ export default function SelectCategory({ formData, setFormData }) {
         subcategoryId: selectedSubcategory,
       },
     });
-    setOpenModal(false); // Đóng modal sau khi xác nhận
+    setOpenModal(false);
   };
-  // Lấy tên của category và subcategory
   const getCategoryName = (id) =>
     categories.find((category) => category._id === id)?.name || "";
   const getSubcategoryName = (id) =>
@@ -63,7 +61,7 @@ export default function SelectCategory({ formData, setFormData }) {
         )}`
       : "Chọn loại điểm đến";
 
-      return (
+  return (
     <div>
       <Button
         outline
@@ -101,7 +99,7 @@ export default function SelectCategory({ formData, setFormData }) {
               id="subcategory"
               value={selectedSubcategory || ""}
               onChange={(e) => setSelectedSubcategory(e.target.value)}
-              disabled={!selectedCategory} // Disable khi chưa chọn Tỉnh/Thành phố
+              disabled={!selectedCategory}
             >
               <option value="">Chọn điểm đến cụ thể</option>
               {subcategories.map((subcategory) => (

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 export default function InfoSession({ selection }) {
-  console.log("selection", selection);
   return (
     <div>
       <img

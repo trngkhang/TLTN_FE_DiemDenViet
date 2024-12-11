@@ -7,7 +7,6 @@ export default function DeleteConfirmModal({
 }) {
   const confirmDelete = () => {
     handleDelete(itemId);
-   // close modal
   };
 
   return (

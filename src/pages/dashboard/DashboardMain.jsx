@@ -25,9 +25,9 @@ export default function DashboardMain() {
       try {
         const res = await UserService.gets(queryParams);
         if (res.status) {
-          setUsers(res.data.users);
-          setTotalUsers(res.data.totalUsers);
-          setLastMonthUsers(res.data.totalUsers);
+          setUsers(res.data.data);
+          setTotalUsers(res.data.total);
+          setLastMonthUsers(res.data.lastMonth);
         }
       } catch (error) {
         console.log(error);
@@ -37,9 +37,9 @@ export default function DashboardMain() {
       try {
         const res = await ReviewService.gets(queryParams);
         if (res.status) {
-          setReviews(res.data.reviews);
-          setTotalReviews(res.data.totalReviews);
-          setLastMonthReviews(res.data.totalReviews);
+          setReviews(res.data.data);
+          setTotalReviews(res.data.total);
+          setLastMonthReviews(res.data.lastMonth);
         }
       } catch (error) {
         console.log(error);
@@ -49,9 +49,9 @@ export default function DashboardMain() {
       try {
         const res = await TripService.gets(queryParams);
         if (res.status) {
-          setTrips(res.data.trips);
-          setTotalTrips(res.data.totalTrips);
-          setLastMonthTrips(res.data.totalTrips);
+          setTrips(res.data.data);
+          setTotalTrips(res.data.total);
+          setLastMonthTrips(res.data.lastMonth);
         }
       } catch (error) {
         console.log(error);

@@ -1,30 +1,30 @@
 import { Button, Label, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
-import Pagination from "@mui/material/Pagination";
 import { Link } from "react-router-dom";
 import DestinationService from "../../services/DestinationService";
 import SelectAddress3 from "../../components/address/SelectAddress3";
 import SelectCategory from "../../components/destination/search-destination/SelectCategory";
 import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
+import { Pagination } from "@mui/material";
 
 export default function DashDestination() {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState({});
-  const [page, setPage] = useState(1); // Trang hiện tại
-  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
-  const limit = 20; // Số mục trên mỗi trang
+  const pageSize = 25;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [deleteItemId, setDeleteItemId] = useState("");
 
   useEffect(() => {
-    setPage(1);
+    setCurrentPage(1);
   }, [filter]);
 
   useEffect(() => {
-    fetchData(page);
-  }, [page, filter]);
+    fetchData();
+  }, [currentPage, filter]);
 
-  const fetchData = async (page) => {
+  const fetchData = async () => {
     try {
       const queryParams = new URLSearchParams({
         categoryId: filter?.category?.categoryId || "",
@@ -32,20 +32,17 @@ export default function DashDestination() {
         provinceId: filter?.provinceId || "",
         districtId: filter?.districtId || "",
         wardId: filter?.wardId || "",
-        page,
-        limit,
+        page: currentPage,
+        pageSize,
       }).toString();
       const res = await DestinationService.gets(queryParams);
       setData(res.data.data);
-      setTotalPages(Math.ceil(res.data.total / limit));
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
 
-  const handlePageChange = (event, value) => {
-    setPage(value); // Cập nhật trang hiện tại
-  };
   const handleDelete = async (id) => {
     try {
       await DestinationService.delete(id);
@@ -55,7 +52,7 @@ export default function DashDestination() {
       console.log("Lỗi khi xóa:", error);
     }
   };
-  console.log(totalPages);
+
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý loại điểm đến</h1>
@@ -136,9 +133,9 @@ export default function DashDestination() {
           </Table.Body>
         </Table>
         <Pagination
-          count={totalPages || 1} // Tổng số trang
-          page={page} // Trang hiện tại
-          onChange={handlePageChange} // Hàm thay đổi trang
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
           className="flex justify-center py-5"
           color="primary"
         />
@@ -147,7 +144,11 @@ export default function DashDestination() {
         <DeleteConfirmModal
           itemId={deleteItemId}
           handleDelete={handleDelete}
-          onCLose={() => setDeleteItemId(null)} // Close modal after delete
+          onCLose={() => setDeleteItemId(null)}
+          Close
+          modal
+          after
+          delete
         />
       )}
     </div>

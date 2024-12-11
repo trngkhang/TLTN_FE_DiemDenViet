@@ -58,8 +58,8 @@ export default function DestinationDetail() {
                   destination?.address?.districtId?.name,
                   destination?.address?.provinceId?.name,
                 ]
-                  .filter(Boolean) // Lọc các phần tử null hoặc undefined
-                  .join(" ") // Nối các phần tử còn lại với khoảng trắng
+                  .filter(Boolean)
+                  .join(" ")
               )
             }
             target="_blank"
@@ -74,8 +74,8 @@ export default function DestinationDetail() {
                   destination?.address?.districtId?.name,
                   destination?.address?.provinceId?.name,
                 ]
-                  .filter(Boolean) // Lọc ra các phần tử không phải là null hoặc undefined
-                  .join(", ") // Nối với khoảng trắngs
+                  .filter(Boolean) 
+                  .join(", ") 
               }
             </p>
           </Link>

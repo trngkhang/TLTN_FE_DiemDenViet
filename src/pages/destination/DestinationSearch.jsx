@@ -14,7 +14,7 @@ export default function DestinationSearch() {
   const [destinations, setDestinations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 12; // hoặc giá trị khác tùy ý
+  const itemsPerPage = 12; 
   const [openModalCategory, setOpenModalCategory] = useState(false);
 
   const handleSearch = async () => {
@@ -33,7 +33,7 @@ export default function DestinationSearch() {
       const res = await DestinationService.search(queryParams);
       if (res.status) {
         setDestinations(res.data.data);
-        setTotalPages(Math.ceil(res.data.total / itemsPerPage)); // Cập nhật số trang tổng
+        setTotalPages(Math.ceil(res.data.total / itemsPerPage));
       }
     } catch (error) {
       console.log(error.message);
@@ -42,7 +42,7 @@ export default function DestinationSearch() {
 
   useEffect(() => {
     handleSearch();
-  }, [filter, currentPage]); // Thêm currentPage vào dependencies
+  }, [filter, currentPage]); 
 
   return (
     <div className="bg-gray-100 w-full py-1">

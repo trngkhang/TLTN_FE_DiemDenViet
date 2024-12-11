@@ -43,7 +43,7 @@ export default function SelectAddress4({ formData, setFormData }) {
       if (provinceId) {
         try {
           const res = await ProvinceService.get(provinceId);
-          setProvinceName(res.data.name); // Giả sử API trả về { name: "Province Name" }
+          setProvinceName(res.data.name);
         } catch (error) {
           console.error("Error fetching province name:", error);
         }
@@ -56,7 +56,7 @@ export default function SelectAddress4({ formData, setFormData }) {
       if (districtId) {
         try {
           const res = await DistrictService.get(districtId);
-          setWardName(res.data.name); // Giả sử API trả về { name: "District Name" }
+          setWardName(res.data.name);
         } catch (error) {
           console.error("Error fetching district name:", error);
         }
@@ -69,7 +69,7 @@ export default function SelectAddress4({ formData, setFormData }) {
       if (wardId) {
         try {
           const res = await WardService.get(wardId);
-          setDistrictName(res.data.name); // Giả sử API trả về { name: "District Name" }
+          setDistrictName(res.data.name);
         } catch (error) {
           console.error("Error fetching ward name:", error);
         }
@@ -78,11 +78,10 @@ export default function SelectAddress4({ formData, setFormData }) {
       }
     };
 
-    // Fetch data khi formData thay đổi
     fetchProvinceName(selectedProvince);
     fetchDistrictName(selectedDistrict);
     fetchWardName(selectedWard);
-  }, [selectedProvince, selectedDistrict, selectedWard]); // Theo dõi sự thay đổi của provinceId và districtId
+  }, [selectedProvince, selectedDistrict, selectedWard]);
 
   const displayText =
     provinceName || districtName || wardName

@@ -55,7 +55,7 @@ export default function CreateProvince() {
                 }
                 required
               />
-            </div><SelectAddress2/>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>

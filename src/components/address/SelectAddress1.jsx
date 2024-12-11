@@ -13,7 +13,7 @@ export default function SelectAddress1({ formData, setFormData }) {
       if (provinceId) {
         try {
           const res = await ProvinceService.get(provinceId);
-          setProvinceName(res.data.name); // Giả sử API trả về { name: "Province Name" }
+          setProvinceName(res.data.name); 
         } catch (error) {
           console.error("Error fetching province name:", error);
         }
@@ -21,10 +21,8 @@ export default function SelectAddress1({ formData, setFormData }) {
         setProvinceName(null);
       }
     };
-
-    // Fetch data khi formData thay đổi
     fetchProvinceName(formData.provinceId);
-  }, [formData.provinceId]); // Theo dõi sự thay đổi của provinceId và districtId
+  }, [formData.provinceId]); 
 
   const displayText = provinceName ? `${provinceName}`.trim() : "Chọn địa chỉ";
 

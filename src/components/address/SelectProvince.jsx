@@ -1,4 +1,3 @@
-// SelectProvince.js
 import { Label, Select } from "flowbite-react";
 import { useEffect, useState } from "react";
 import ProvinceService from "../../services/ProvinceService";

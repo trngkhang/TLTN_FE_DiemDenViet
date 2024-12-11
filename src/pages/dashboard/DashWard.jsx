@@ -13,9 +13,9 @@ export default function DashProvince() {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
-  const limit = 50; // Số mục trên mỗi trang
+  const pageSize = 50;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [updateItem, setUpdateItem] = useState("");
   const [deleteItemId, setDeleteItemId] = useState("");
 
@@ -25,29 +25,25 @@ export default function DashProvince() {
         provinceId,
         districtId,
         page,
-        limit,
+        pageSize,
       }).toString();
       const res = await WardService.gets(queryParams);
       setData(res.data.data);
-      setTotalPages(Math.ceil(res.data.total / limit));
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
   useEffect(() => {
     setSelectedDistrict("");
-  }, [selectedProvince]); // Gọi lại fetchData khi trang thay đổi
+  }, [selectedProvince]);
   useEffect(() => {
-    // Reset trang về 1 khi thay đổi selectedProvince hoặc selectedDistrict
     setCurrentPage(1);
   }, [selectedProvince, selectedDistrict]);
   useEffect(() => {
     fetchData(currentPage, selectedProvince, selectedDistrict);
-  }, [currentPage, selectedProvince, selectedDistrict]); // Gọi lại fetchData khi trang thay đổi
+  }, [currentPage, selectedProvince, selectedDistrict]);
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value); // Cập nhật trang hiện tại
-  };
   const handleDelete = async (id) => {
     try {
       await WardService.delete(id);
@@ -57,7 +53,7 @@ export default function DashProvince() {
       console.log("Lỗi khi xóa:", error);
     }
   };
-  console.log(currentPage, totalPages);
+
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý phường xã</h1>
@@ -130,9 +126,9 @@ export default function DashProvince() {
           </Table.Body>
         </Table>
         <Pagination
-          count={totalPages || 1} // Tổng số trang
-          page={currentPage} // Trang hiện tại
-          onChange={handlePageChange} // Hàm thay đổi trang
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
           className="flex justify-center py-5"
           color="primary"
         />
@@ -144,7 +140,7 @@ export default function DashProvince() {
         <DeleteConfirmModal
           itemId={deleteItemId}
           handleDelete={handleDelete}
-          onCLose={() => setDeleteItemId(null)} // Close modal after delete
+          onCLose={() => setDeleteItemId(null)}
         />
       )}
     </div>

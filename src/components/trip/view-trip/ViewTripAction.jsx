@@ -21,7 +21,6 @@ export default function ViewTripAction({ itemId }) {
   const handleCopyLink = () => {
     const currentURL = window.location.href;
 
-    // Sao chép URL vào clipboard
     navigator.clipboard
       .writeText(currentURL)
       .then(() => {

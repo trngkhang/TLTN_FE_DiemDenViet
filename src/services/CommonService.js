@@ -8,7 +8,6 @@ import {
 
 export default class CommonService {
   static async uploadImage(imageFile) {
-    console.log(imageFile);
     return new Promise((resolve, reject) => {
       if (!imageFile) {
         return reject("No file selected");

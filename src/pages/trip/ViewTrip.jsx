@@ -17,7 +17,6 @@ export default function ViewTrip() {
       const res = await TripService.get(tripId);
 
       if (res.status) {
-        console.log(res.data);
         setTrip(res.data);
       }
     } catch (error) {
@@ -28,7 +27,7 @@ export default function ViewTrip() {
   useEffect(() => {
     tripId && getTripData();
   }, [tripId]);
-  console.log(user, trip.userId);
+
   return (
     <div className="max-w-3xl mx-auto py-10 p-3">
       {/* infomation session */}

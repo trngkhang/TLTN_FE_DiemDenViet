@@ -14,9 +14,9 @@ export default function NotificationModal({
   const handleClose = () => {
     setOpenModal(false);
     if (navigateTo) {
-      navigate(navigateTo); // Navigate to specified page
+      navigate(navigateTo);
     } else if (reloadPage) {
-      window.location.reload(); // Reload the page
+      window.location.reload();
     }
   };
 

@@ -13,13 +13,11 @@ export default function SelectAddress({
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-  // State lưu chọn địa chỉ
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [street, setStreet] = useState("");
 
-  // Gán dữ liệu từ formData vào các state khi component render lần đầu
   useEffect(() => {
     if (formData && formData.address) {
       setSelectedProvince(formData.address.provinceId || null);
@@ -29,40 +27,37 @@ export default function SelectAddress({
     }
   }, [formData]);
 
-  // Lấy danh sách tỉnh/thành
   useEffect(() => {
     const fetchProvinces = async () => {
       const queryParams = new URLSearchParams({ isDeleted: false }).toString();
       const res = await ProvinceService.getForSelect();
       if (res.status) {
-        setProvinces(res.data.provinces);
+        setProvinces(res.data.data);
       }
     };
     fetchProvinces();
   }, []);
 
-  // Lấy danh sách quận/huyện dựa trên tỉnh/thành đã chọn
   useEffect(() => {
     const fetchDistricts = async () => {
       if (!selectedProvince) return;
-      const queryParams = new URLSearchParams({ 
+      const queryParams = new URLSearchParams({
         provinceId: selectedProvince,
       }).toString();
       const res = await DistrictService.getForSelect(queryParams);
       if (res.status) {
         setDistricts(res.data.data);
-        setWards([]); // Xóa danh sách phường/xã cũ khi tỉnh/thành thay đổi
-        setSelectedWard(""); // Reset selectedWard khi tỉnh/thành thay đổi
+        setWards([]);
+        setSelectedWard("");
       }
     };
     fetchDistricts();
   }, [selectedProvince]);
 
-  // Lấy danh sách phường/xã dựa trên quận/huyện đã chọn
   useEffect(() => {
     const fetchWards = async () => {
       if (!selectedDistrict) return;
-      const queryParams = new URLSearchParams({ 
+      const queryParams = new URLSearchParams({
         districtId: selectedDistrict,
       }).toString();
       const res = await WardService.getForSelect(queryParams);
@@ -73,7 +68,6 @@ export default function SelectAddress({
     fetchWards();
   }, [selectedDistrict]);
 
-  // Đảm bảo đồng bộ selectedDistrict và selectedWard khi render lần đầu
   useEffect(() => {
     if (selectedProvince && districts.length > 0) {
       setSelectedDistrict(formData.address.districtId || null);
@@ -86,7 +80,6 @@ export default function SelectAddress({
     }
   }, [wards, selectedDistrict]);
 
-  // Xử lý khi nhấn nút Xác nhận
   const handleConfirm = () => {
     setFormData({
       ...formData,
@@ -97,7 +90,7 @@ export default function SelectAddress({
         street,
       },
     });
-    setOpenModal(false); // Đóng modal sau khi xác nhận
+    setOpenModal(false);
   };
 
   return (
@@ -133,7 +126,7 @@ export default function SelectAddress({
               setSelectedDistrict(e.target.value);
               setSelectedWard("");
             }}
-            disabled={!selectedProvince} // Disable khi chưa chọn Tỉnh/Thành phố
+            disabled={!selectedProvince}
           >
             <option value="">Chọn Quận/Huyện</option>
             {districts.map((district) => (
@@ -149,7 +142,7 @@ export default function SelectAddress({
             id="ward"
             value={selectedWard || ""}
             onChange={(e) => setSelectedWard(e.target.value)}
-            disabled={!selectedDistrict} // Disable khi chưa chọn Quận/Huyện
+            disabled={!selectedDistrict}
           >
             <option value="">Chọn Phường/Xã</option>
             {wards.map((ward) => (

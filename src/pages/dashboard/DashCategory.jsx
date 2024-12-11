@@ -5,16 +5,25 @@ import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateCategory from "../../components/category/CreateCategory";
 import UpdateCategory from "../../components/category/UpdateCategory";
 import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
+import { Pagination } from "@mui/material";
 
 export default function DashCategory() {
   const [data, setData] = useState([]);
   const [updateCategory, setUpdateCategory] = useState("");
   const [deleteCategoryId, setDeleteCategoryId] = useState("");
+  const pageSize = 50;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async () => {
     try {
+      const queryParams = new URLSearchParams({
+        page: currentPage,
+        pageSize,
+      }).toString();
       const res = await CategoryService.gets();
-      setData(res.data.categories);
+      setData(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
@@ -22,7 +31,7 @@ export default function DashCategory() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   const handleDelete = async (id) => {
     try {
@@ -89,6 +98,13 @@ export default function DashCategory() {
             )}
           </Table.Body>
         </Table>
+        <Pagination
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
+          className="flex justify-center py-5"
+          color="primary"
+        />
       </div>
       {updateCategory && (
         <UpdateCategory
@@ -100,7 +116,7 @@ export default function DashCategory() {
         <DeleteConfirmModal
           itemId={deleteCategoryId}
           handleDelete={handleDelete}
-          onCLose={() => setDeleteCategoryId(null)} // Close modal after delete
+          onCLose={() => setDeleteCategoryId(null)}
         />
       )}
     </div>

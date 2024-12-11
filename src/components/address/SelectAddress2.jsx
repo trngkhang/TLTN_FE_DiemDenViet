@@ -30,7 +30,7 @@ export default function SelectAddress2({ formData, setFormData }) {
       if (districtId) {
         try {
           const res = await DistrictService.get(districtId);
-          setDistrictName(res.data.name); // Giả sử API trả về { name: "District Name" }
+          setDistrictName(res.data.name);
         } catch (error) {
           console.error("Error fetching district name:", error);
         }
@@ -39,10 +39,9 @@ export default function SelectAddress2({ formData, setFormData }) {
       }
     };
 
-    // Fetch data khi formData thay đổi
     fetchProvinceName(formData.provinceId);
     fetchDistrictName(formData.districtId);
-  }, [formData.provinceId, formData.districtId]); // Theo dõi sự thay đổi của provinceId và districtId
+  }, [formData.provinceId, formData.districtId]);
 
   const displayText =
     provinceName || districtName

@@ -15,7 +15,6 @@ export default function UpdateDestination() {
   const { destinationId } = useParams();
   const [loading, setLoading] = useState(true);
 
-  // Initialize form data state
   const [formData, setFormData] = useState({
     name: "",
     address: {},
@@ -30,14 +29,12 @@ export default function UpdateDestination() {
   const [notification, setNotification] = useState(null);
   const [navigateURL, setNavigateURL] = useState(null);
 
-  // Fetch data only if destinationId changes
   const fetchDestination = async () => {
     try {
       const res = await DestinationService.getForUpdate(destinationId);
       const data = res.data;
       if (res.status) {
         setPublishError(null);
-        // Update formData with fetched data
         setFormData((prevData) => ({
           ...prevData,
           name: data.name || "",
@@ -64,7 +61,6 @@ export default function UpdateDestination() {
     fetchDestination();
   }, [destinationId]);
 
-  // Avoid direct mutation by defining specific update functions for each field
   const handleFormDataChange = (field, value) => {
     setFormData((prevData) => ({ ...prevData, [field]: value }));
   };

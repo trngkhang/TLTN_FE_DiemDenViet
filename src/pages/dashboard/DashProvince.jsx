@@ -5,16 +5,25 @@ import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateProvince from "../../components/province/CreateProvince";
 import UpdateProvince from "../../components/province/UpdateProvince";
 import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
+import { Pagination } from "@mui/material";
 
 export default function DashProvince() {
   const [data, setData] = useState([]);
   const [updateItem, setUpdateItem] = useState("");
   const [deleteItemId, setDeleteItemId] = useState("");
+  const pageSize = 50;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async () => {
     try {
-      const res = await ProvinceService.gets();
-      setData(res.data.provinces);
+      const queryParams = new URLSearchParams({
+        page: currentPage,
+        pageSize,
+      }).toString();
+      const res = await ProvinceService.gets(queryParams);
+      setData(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
@@ -22,7 +31,7 @@ export default function DashProvince() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   const handleDelete = async (id) => {
     try {
@@ -89,18 +98,22 @@ export default function DashProvince() {
             )}
           </Table.Body>
         </Table>
+        <Pagination
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)} 
+          className="flex justify-center py-5"
+          color="primary"
+        />
       </div>
       {updateItem && (
-        <UpdateProvince
-          item={updateItem}
-          onCLose={() => setUpdateItem(null)}
-        />
+        <UpdateProvince item={updateItem} onCLose={() => setUpdateItem(null)} />
       )}
       {deleteItemId && (
         <DeleteConfirmModal
           itemId={deleteItemId}
           handleDelete={handleDelete}
-          onCLose={() => setDeleteItemId(null)} // Close modal after delete
+          onCLose={() => setDeleteItemId(null)}  
         />
       )}
     </div>

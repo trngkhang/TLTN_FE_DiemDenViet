@@ -26,17 +26,15 @@ export default function Dashboard() {
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
-  // Tạo một hiệu ứng lắng nghe sự thay đổi kích thước màn hình
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        setSidebarOpen(false); // Đóng sidebar off-canvas nếu màn hình lớn hơn md
+        setSidebarOpen(false);
       }
     };
 
     window.addEventListener("resize", handleResize);
 
-    // Kiểm tra ngay khi component được render lần đầu tiên
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);

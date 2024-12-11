@@ -1,4 +1,3 @@
-// NotificationModal2 Component
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";

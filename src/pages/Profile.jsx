@@ -35,7 +35,6 @@ export default function Profile() {
   useEffect(() => {
     if (imageFile) {
       uploadImage();
-      console.log("upload");
     }
   }, [imageFile]);
 
@@ -103,7 +102,6 @@ export default function Profile() {
           setImageFileUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          console.log("errr");
           setImageFileUploadError("Could not upload image.");
           setImageFile(null);
           setImageFileUrl(null);
@@ -185,7 +183,7 @@ export default function Profile() {
                 />
                 <button
                   className="bg-blue-500 text-white py-2 px-4 rounded-md"
-                  onClick={handleSave} // Single onClick handler
+                  onClick={handleSave}
                 >
                   Lưu
                 </button>

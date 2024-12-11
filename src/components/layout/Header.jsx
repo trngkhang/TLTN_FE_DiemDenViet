@@ -8,7 +8,7 @@ import AuthService from "../../services/AuthService";
 import HeaderDrawer from "../common/HeaderDrawer";
 
 export default function Header() {
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false); // Set default to false
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);  
   const [isScrolled, setIsScrolled] = useState(false);
   const path = useLocation().pathname;
   const dispatch = useDispatch();
@@ -34,7 +34,6 @@ export default function Header() {
 
     window.addEventListener("scroll", handleScroll);
 
-    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };

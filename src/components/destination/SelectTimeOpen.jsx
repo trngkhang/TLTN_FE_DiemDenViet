@@ -15,8 +15,7 @@ export default function SelectTimeOpen({ formData, setFormData }) {
   const [openModal, setOpenModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("all");
 
-  // Cập nhật formData khi mở modal
-  useEffect(() => {
+   useEffect(() => {
     if (formData.openingTime.length === 0) {
       setFormData({
         ...formData,

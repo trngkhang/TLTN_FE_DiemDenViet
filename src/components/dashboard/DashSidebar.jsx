@@ -8,7 +8,6 @@ import { MdCategory } from "react-icons/md";
 import { FaMapLocationDot } from "react-icons/fa6";
 
 export default function DashSidebar({ setSidebarOpen }) {
-  // Nhận setSidebarOpen từ props
   const location = useLocation();
   const [tab, setTab] = useState("");
   const dispatch = useDispatch();
@@ -23,7 +22,7 @@ export default function DashSidebar({ setSidebarOpen }) {
   }, [location.search]);
 
   const handleLinkClick = () => {
-    setSidebarOpen(false); // Đóng sidebar khi nhấp vào link
+    setSidebarOpen(false);
   };
 
   return (

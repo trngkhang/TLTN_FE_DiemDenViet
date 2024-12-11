@@ -13,7 +13,6 @@ export default function SelectAddress({
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-  // State lưu chọn địa chỉ
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
@@ -24,7 +23,6 @@ export default function SelectAddress({
     setSelectedWard(filter?.wardId || "");
   }, [filter]);
 
-  // Lấy danh sách tỉnh/thành
   useEffect(() => {
     const fetchProvinces = async () => {
       const res = await ProvinceService.getForSelect();
@@ -43,13 +41,12 @@ export default function SelectAddress({
       const res = await DistrictService.getForSelect(queryParams);
       if (res.status) {
         setDistricts(res.data.data);
-        setWards([]); // Xóa danh sách phường/xã cũ khi tỉnh/thành thay đổi
-        setSelectedWard(""); // Reset selectedWard khi tỉnh/thành thay đổi
+        setWards([]);
+        setSelectedWard("");
       }
     };
     fetchDistricts();
   }, [selectedProvince]);
-  // Lấy danh sách phường/xã dựa trên quận/huyện đã chọn
   useEffect(() => {
     const fetchWards = async () => {
       if (!selectedDistrict) return;
@@ -58,13 +55,12 @@ export default function SelectAddress({
       }).toString();
       const res = await WardService.getForSelect(queryParams);
       if (res.status) {
-        setWards(res.data.wards);
+        setWards(res.data.data);
       }
     };
     fetchWards();
   }, [selectedDistrict]);
 
-  // Xử lý khi nhấn nút Xác nhận
   const handleConfirm = () => {
     setFilter({
       ...filter,
@@ -72,7 +68,7 @@ export default function SelectAddress({
       districtId: selectedDistrict,
       wardId: selectedWard,
     });
-    setOpenModal(false); // Đóng modal sau khi xác nhận
+    setOpenModal(false);
   };
 
   return (
@@ -108,7 +104,7 @@ export default function SelectAddress({
               setSelectedDistrict(e.target.value);
               setSelectedWard("");
             }}
-            disabled={!selectedProvince} // Disable khi chưa chọn Tỉnh/Thành phố
+            disabled={!selectedProvince}
           >
             <option value="">Chọn Quận/Huyện</option>
             {districts.map((district) => (
@@ -124,8 +120,7 @@ export default function SelectAddress({
             id="ward"
             value={selectedWard || ""}
             onChange={(e) => setSelectedWard(e.target.value)}
-            disabled={!selectedDistrict} // Disable khi chưa chọn Quận/Huyện
-          >
+            disabled={!selectedDistrict}       >
             <option value="">Chọn Phường/Xã</option>
             {wards.map((ward) => (
               <option key={ward._id} value={ward._id}>

@@ -21,7 +21,7 @@ class HttpClient {
       const data = await response.json();
       return data;
     } catch (error) {
-      throw error; // Để service quản lý lỗi
+      throw error;  
     }
   }
 

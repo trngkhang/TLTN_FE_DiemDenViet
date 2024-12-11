@@ -6,42 +6,49 @@ import CreateDistrict from "../../components/district/CreateDistrict";
 import UpdateDistrict from "../../components/district/UpdateDistrict";
 import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
 import SelectProvince from "../../components/address/SelectProvince";
+import { Pagination } from "@mui/material";
 
 export default function DashDistrict() {
-  const [selectedProvince, setSelectedProvince] = useState(""); // State lưu category được chọn
-  const [data, setData] = useState([]); // State lưu danh sách district
-  const [updateItem, setUpdateItem] = useState(null); // State cập nhật district
-  const [deleteItemId, setDeleteItemId] = useState(""); // State xóa district
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [data, setData] = useState([]);
+  const [updateItem, setUpdateItem] = useState(null);
+  const [deleteItemId, setDeleteItemId] = useState("");
+  const pageSize = 50;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Lấy danh sách subcategories, có thể lọc theo category
-  const fetchData = async (provinceId) => {
+  const fetchData = async () => {
     try {
       const queryParams = new URLSearchParams({
-        provinceId,
-        limit: "all",
+        provinceId: selectedProvince,
+        page: currentPage,
+        pageSize,
       }).toString();
-      const res = await DistrictService.gets(queryParams); // API lấy danh mục con theo category
-      setData(res.data.districts); // Lưu danh mục con vào state
+      const res = await DistrictService.gets(queryParams);
+      setData(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
 
-  // Xóa district
   const handleDelete = async (id) => {
     try {
-      await DistrictService.delete(id); // Gọi API xóa
-      setDeleteItemId(null); // Đóng modal
-      fetchData(selectedProvince); // Tải lại danh sách sau khi xóa
+      await DistrictService.delete(id);
+      setDeleteItemId(null);
+      fetchData(selectedProvince);
     } catch (error) {
       console.log("Lỗi khi xóa:", error);
     }
   };
 
-  // Gọi API lấy danh sách subcategories khi danh mục cha thay đổi
   useEffect(() => {
-    fetchData(selectedProvince);
+    setCurrentPage(1);
   }, [selectedProvince]);
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedProvince, currentPage]);
 
   return (
     <div>
@@ -105,6 +112,13 @@ export default function DashDistrict() {
             )}
           </Table.Body>
         </Table>
+        <Pagination
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)} 
+          className="flex justify-center py-5"
+          color="primary"
+        />
       </div>
 
       {/* Modal cập nhật district */}

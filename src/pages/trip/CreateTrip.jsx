@@ -54,7 +54,7 @@ export default function CreateTrip() {
       }
     } catch (error) {}
   };
-  console.log(formData);
+
   return (
     <div className="p-3 my-10 max-w-3xl mx-auto">
       <h1></h1>

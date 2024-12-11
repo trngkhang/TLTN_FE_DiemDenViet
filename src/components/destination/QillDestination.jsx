@@ -31,9 +31,7 @@ export default function QillDestination({ formData, setFormData }) {
     input.onchange = async () => {
       const file = input.files[0];
       try {
-        console.log(file);
         const imageUrl = await CommonService.uploadImage(file);
-        console.log(imageUrl);
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
         quill.insertEmbed(range.index, "image", imageUrl);

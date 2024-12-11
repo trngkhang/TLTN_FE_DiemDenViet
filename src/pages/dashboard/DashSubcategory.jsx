@@ -6,64 +6,66 @@ import { IoCheckmarkSharp, IoClose } from "react-icons/io5";
 import CreateSubcategory from "../../components/subcategory/CreateSubcategory";
 import UpdateSubcategory from "../../components/subcategory/UpdateSubcategory";
 import DeleteConfirmModal from "../../components/common/DeleteComfirmModel";
+import { Pagination } from "@mui/material";
 
 export default function DashSubcategory() {
-  const [categories, setCategories] = useState([]); // State lưu danh sách category
-  const [selectedCategory, setSelectedCategory] = useState(""); // State lưu category được chọn
-  const [data, setData] = useState([]); // State lưu danh sách subcategory
-  const [updateSubcategory, setUpdateSubcategory] = useState(null); // State cập nhật subcategory
-  const [deleteSubcategoryId, setDeleteSubcategoryId] = useState(""); // State xóa subcategory
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [data, setData] = useState([]);
+  const [updateSubcategory, setUpdateSubcategory] = useState(null);
+  const [deleteSubcategoryId, setDeleteSubcategoryId] = useState("");
+  const pageSize = 50;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Lấy danh sách categories
   const fetchCategories = async () => {
     try {
-      const res = await CategoryService.getForSelect(); // API lấy danh mục cha
-      setCategories(res.data.data); // Lưu danh mục vào state
+      const res = await CategoryService.getForSelect();
+      setCategories(res.data.data);
     } catch (error) {
       console.log("Lỗi khi fetch danh mục chính:", error);
     }
   };
 
-  // Lấy danh sách subcategories, có thể lọc theo category
   const fetchData = async (categoryId) => {
     try {
       const queryParams = new URLSearchParams({
-        categoryId,
-        limit: "all",
+        categoryId: selectedCategory,
+        page: currentPage,
+        pageSize,
       }).toString();
-      const res = await SubcategoryService.gets(queryParams); // API lấy danh mục con theo category
-      setData(res.data.subcategories); // Lưu danh mục con vào state
+      const res = await SubcategoryService.gets(queryParams);
+      setData(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.log("Lỗi khi fetch dữ liệu:", error);
     }
   };
 
-  // Xóa subcategory
   const handleDelete = async (id) => {
     try {
-      await SubcategoryService.delete(id); // Gọi API xóa
-      setDeleteSubcategoryId(null); // Đóng modal
-      fetchData(selectedCategory); // Tải lại danh sách sau khi xóa
+      await SubcategoryService.delete(id);
+      setDeleteSubcategoryId(null);
+      fetchData();
     } catch (error) {
       console.log("Lỗi khi xóa danh mục:", error);
     }
   };
 
-  // Gọi API lấy danh mục cha khi component được mount
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  // Gọi API lấy danh sách subcategories khi danh mục cha thay đổi
   useEffect(() => {
-    fetchData(selectedCategory);
+    setCurrentPage(1);
   }, [selectedCategory]);
+  useEffect(() => {
+    fetchData();
+  }, [selectedCategory, currentPage]);
 
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý Danh mục con</h1>
       <div className="flex justify-between items-center mb-4">
-        {/* Dropdown chọn danh mục cha */}
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -79,7 +81,6 @@ export default function DashSubcategory() {
         <CreateSubcategory />
       </div>
 
-      {/* Bảng hiển thị danh sách subcategories */}
       <div className="overflow-x-auto">
         <Table>
           <Table.Head>
@@ -127,10 +128,16 @@ export default function DashSubcategory() {
               </Table.Row>
             )}
           </Table.Body>
-        </Table>
+        </Table>{" "}
+        <Pagination
+          count={totalPages || 1}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
+          className="flex justify-center py-5"
+          color="primary"
+        />
       </div>
 
-      {/* Modal cập nhật subcategory */}
       {updateSubcategory && (
         <UpdateSubcategory
           item={updateSubcategory}
@@ -138,7 +145,6 @@ export default function DashSubcategory() {
         />
       )}
 
-      {/* Modal xác nhận xóa subcategory */}
       {deleteSubcategoryId && (
         <DeleteConfirmModal
           itemId={deleteSubcategoryId}

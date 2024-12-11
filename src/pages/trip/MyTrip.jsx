@@ -25,7 +25,7 @@ export default function MyTrip() {
   useEffect(() => {
     getUserTrips();
   }, []);
-  console.log(userTrips.length);
+ 
   return (
     <div className="max-w-4xl mx-auto py-10 p-3">
       <div className="flex flex-row text-xl gap-2">
