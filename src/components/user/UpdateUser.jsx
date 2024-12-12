@@ -1,18 +1,18 @@
 import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
 import { useState } from "react";
-import CategoryService from "../../services/CategoryService";
 import NotificationModal2 from "../common/NotificationModal2";
+import UserService from "../../services/UserService";
 
-export default function UpdateCategory({ item, onCLose }) {
+export default function UpdateUser({ item, onCLose }) {
   const [formData, setFormData] = useState({
-    name: item.name,
+    isAdmin: item.isAdmin,
     isDeleted: item.isDeleted,
   });
   const [notification, setNotification] = useState(null);
 
   const handleUpdate = async () => {
     try {
-      const res = await CategoryService.put(item._id, formData);
+      const res = await UserService.putByAdmin(item._id, formData);
 
       if (res.status) {
         setNotification({
@@ -38,28 +38,33 @@ export default function UpdateCategory({ item, onCLose }) {
   return (
     <>
       <Modal show={true} onClose={onCLose}>
-        <Modal.Header>Chỉnh sửa danh mục chính</Modal.Header>
+        <Modal.Header>Chỉnh sửa tài khoản</Modal.Header>
         <Modal.Body>
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="name" value="Tên danh mục chính" />
-              </div>
-              <TextInput
-                id="name"
-                type="text"
-                placeholder="Nhập tên danh mục chính"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                required
-              />
+              <Label htmlFor="name" value="Tên tài khoản" />
+              <TextInput id="name" type="text" value={item.name} disabled />
             </div>
             <div>
-              <div>
-                <Label htmlFor="isDeleted" value="Khóa truy cập" />
-              </div>
+              <Label htmlFor="name" value="Tên đăng nhập" />
+              <TextInput id="name" type="text" value={item.username} disabled />
+            </div>
+            <div>
+              <Label htmlFor="isAdmin" value="Quyền" />
+              <Select
+                id="isAdmin"
+                value={formData.isAdmin}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAdmin: e.target.value })
+                }
+                required
+              >
+                <option value={true}>Quản trị</option>
+                <option value={false}>Người dùng</option>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="isDeleted" value="Khóa truy cập" />
               <Select
                 id="isDeleted"
                 value={formData.isDeleted}

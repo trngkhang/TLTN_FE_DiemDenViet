@@ -7,8 +7,11 @@ export default class UserService {
   static async gets(queryParams) {
     return HttpClient.get(`/user?${queryParams}`);
   }
-  static async post(formData) {
-    return HttpClient.post("/user", formData);
+  static async put(id, formData) {
+    return HttpClient.put(`/user/${id}`, formData);
+  }
+  static async putByAdmin(id, formData) {
+    return HttpClient.put(`/user/${id}/byadmin`, formData);
   }
   static async delete(id) {
     return HttpClient.delete(`/user/${id}`);
