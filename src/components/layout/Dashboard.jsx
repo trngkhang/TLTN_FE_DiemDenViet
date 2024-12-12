@@ -10,6 +10,7 @@ import DashDistrict from "../../pages/dashboard/DashDistrict";
 import DashWard from "../../pages/dashboard/DashWard";
 import DashCategory from "../../pages/dashboard/DashCategory";
 import DashSubcategory from "../../pages/dashboard/DashSubcategory";
+import DashReview from "../../pages/dashboard/DashReview";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -78,6 +79,7 @@ export default function Dashboard() {
         {tab === "category" && <DashCategory />}
         {tab === "subcategory" && <DashSubcategory />}
         {tab === "destination" && <DashDestination />}
+        {tab === "review" && <DashReview />}
       </div>
     </div>
   );

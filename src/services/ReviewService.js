@@ -7,6 +7,9 @@ export default class ReviewService {
   static async gets(queryParams) {
     return HttpClient.get(`/review?${queryParams}`);
   }
+  static async getForDestination(queryParams) {
+    return HttpClient.get(`/review/getfordestination?${queryParams}`);
+  }
   static async post(formData) {
     return HttpClient.post("/review", formData);
   }

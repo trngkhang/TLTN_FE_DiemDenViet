@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { MdCategory } from "react-icons/md";
 import { FaMapLocationDot } from "react-icons/fa6";
+import { BiSolidCommentDetail } from "react-icons/bi";
 
 export default function DashSidebar({ setSidebarOpen }) {
   const location = useLocation();
@@ -91,6 +92,17 @@ export default function DashSidebar({ setSidebarOpen }) {
                 as="div"
               >
                 Điểm đến
+              </Sidebar.Item>
+            </Link>
+          )}
+          {user.isAdmin && (
+            <Link to="/dashboard?tab=review" onClick={handleLinkClick}>
+              <Sidebar.Item
+                active={tab === "review"}
+                icon={BiSolidCommentDetail}
+                as="div"
+              >
+                Đánh giá
               </Sidebar.Item>
             </Link>
           )}

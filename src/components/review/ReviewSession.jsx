@@ -21,17 +21,19 @@ export default function ReviewSession({ destinationId }) {
     async (startIndex = 0, append = false) => {
       try {
         const queryParams = new URLSearchParams({
+          isDeleted: false,
           destinationId,
           startIndex,
           limit: 6,
+          oder: 1,
         }).toString();
 
-        const res = await ReviewService.gets(queryParams);
+        const res = await ReviewService.getForDestination(queryParams);
 
         if (res.status) {
-          setTotalReviews(res.data.totalReviews);
+          setTotalReviews(res.data.total);
           setReviews((prevReviews) =>
-            append ? [...prevReviews, ...res.data.reviews] : res.data.reviews
+            append ? [...prevReviews, ...res.data.data] : res.data.data
           );
           setCurrentIndex(startIndex);
         }

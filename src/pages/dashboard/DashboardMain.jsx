@@ -18,48 +18,42 @@ export default function DashboardMain() {
   const [lastMonthCommnets, setLastMonthReviews] = useState(0);
   const [lastMonthTrips, setLastMonthTrips] = useState(0);
   const limitOnePage = 5;
-  const queryParams = new URLSearchParams({ limit: limitOnePage }).toString();
+  const queryParams = new URLSearchParams({
+    pageSize: limitOnePage,
+    order: 1,
+  }).toString();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const res = await UserService.gets(queryParams);
-        if (res.status) {
-          setUsers(res.data.data);
-          setTotalUsers(res.data.total);
-          setLastMonthUsers(res.data.lastMonth);
-        }
+        const [userRes, reviewRes, tripRes] = await Promise.all([
+          UserService.gets(queryParams),
+          ReviewService.gets(queryParams),
+          TripService.gets(queryParams),
+        ]);
+
+        const handleResponse = (res, setData, setTotal, setLastMonth) => {
+          if (res?.status) {
+            setData(res.data.data);
+            setTotal(res.data.total);
+            setLastMonth(res.data.lastMonth);
+          }
+        };
+
+        handleResponse(userRes, setUsers, setTotalUsers, setLastMonthUsers);
+        handleResponse(
+          reviewRes,
+          setReviews,
+          setTotalReviews,
+          setLastMonthReviews
+        );
+        handleResponse(tripRes, setTrips, setTotalTrips, setLastMonthTrips);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching data:", error);
       }
     };
-    const fetchReviews = async () => {
-      try {
-        const res = await ReviewService.gets(queryParams);
-        if (res.status) {
-          setReviews(res.data.data);
-          setTotalReviews(res.data.total);
-          setLastMonthReviews(res.data.lastMonth);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const fetchTrips = async () => {
-      try {
-        const res = await TripService.gets(queryParams);
-        if (res.status) {
-          setTrips(res.data.data);
-          setTotalTrips(res.data.total);
-          setLastMonthTrips(res.data.lastMonth);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUsers();
-    fetchReviews();
-    fetchTrips();
+
+    fetchData();
   }, []);
 
   return (
@@ -150,10 +144,7 @@ export default function DashboardMain() {
             <Table.Body className="divide-y">
               {trips &&
                 trips.map((trip) => (
-                  <Table.Row
-                    key={trip._id}
-                    className="bg-white "
-                  >
+                  <Table.Row key={trip._id} className="bg-white ">
                     <Table.Cell>{trip.selection.location}</Table.Cell>
                     <Table.Cell>{trip.userId.name}</Table.Cell>
                   </Table.Row>
@@ -170,7 +161,7 @@ export default function DashboardMain() {
           </div>
           <Table hoverable>
             <Table.Head>
-              <Table.HeadCell>Tên người dùng</Table.HeadCell>
+              <Table.HeadCell>Id người dùng</Table.HeadCell>
               <Table.HeadCell>Sao</Table.HeadCell>
               <Table.HeadCell>Đánh giá</Table.HeadCell>
             </Table.Head>
@@ -181,7 +172,7 @@ export default function DashboardMain() {
                     key={index}
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
                   >
-                    <Table.Cell>{review.userId.name}</Table.Cell>
+                    <Table.Cell>{review.userId}</Table.Cell>
                     <Table.Cell>{review.rating}</Table.Cell>
                     <Table.Cell>{review.comment}</Table.Cell>
                   </Table.Row>
