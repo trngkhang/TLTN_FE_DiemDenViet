@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import envVar from "../../utils/envVar";
 import { HiOutlineCalendar } from "react-icons/hi2";
-import { IoEyeOutline } from "react-icons/io5";
+import { IoEyeOutline, IoTicketOutline, IoTime } from "react-icons/io5";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import ReviewSession from "../../components/review/ReviewSession";
 import { Badge } from "flowbite-react";
 import DestinationService from "../../services/DestinationService";
+import "../../../public/css/qill-content.css";
 
 export default function DestinationDetail() {
   const { id } = useParams();
@@ -27,7 +27,7 @@ export default function DestinationDetail() {
       <div className="max-w-5xl mx-auto bg-white p-3">
         <div className="flex flex-col gap-3 pt-3">
           <div className="text-center pt-4">
-            <h1 className="font-semibold text-3xl mb-2">{destination.name}</h1>
+            <h1 className="font-bold text-4xl mb-2">{destination.name}</h1>
             <div className="flex justify-center flex-wrap gap-2 mb-4">
               <Badge color="gray" className="p-2 rounded-full">
                 {destination?.category?.categoryId?.name}
@@ -47,44 +47,50 @@ export default function DestinationDetail() {
               </div>
             </div>
           </div>
-          <Link
-            to={
-              "https://www.google.com/maps/search/?api=1&query=" +
-              encodeURIComponent(
-                [
-                  destination?.name,
+          <div>
+            <div className="flex flex-row gap-1 items-center">
+              <IoTicketOutline />
+              {destination?.ticketPrice}{" "}
+            </div>
+            <div className="flex flex-row gap-1 items-center">
+              <IoTime />
+              {destination?.openingTime}
+            </div>
+            <Link
+              to={
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(
+                  [
+                    destination?.name,
+                    destination?.address?.street,
+                    destination?.address?.wardId?.name,
+                    destination?.address?.districtId?.name,
+                    destination?.address?.provinceId?.name,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")
+                )
+              }
+              target="_blank"
+              className="flex flex-row items-center hover:underline-offset-2 hover:text-blue-500"
+            >
+              <FaMapMarkerAlt className="text-gray-700 mr-1" />
+              <p>
+                {[
                   destination?.address?.street,
                   destination?.address?.wardId?.name,
                   destination?.address?.districtId?.name,
                   destination?.address?.provinceId?.name,
                 ]
                   .filter(Boolean)
-                  .join(" ")
-              )
-            }
-            target="_blank"
-            className="flex flex-row items-center hover:underline-offset-2 hover:text-blue-500"
-          >
-            <FaMapMarkerAlt className="text-gray-700 mr-1" />
-            <p>
-              {
-                [
-                  destination?.address?.street,
-                  destination?.address?.wardId?.name,
-                  destination?.address?.districtId?.name,
-                  destination?.address?.provinceId?.name,
-                ]
-                  .filter(Boolean) 
-                  .join(", ") 
-              }
-            </p>
-          </Link>
+                  .join(", ")}
+              </p>
+            </Link>
+          </div>
         </div>
-        <img
-          src={destination.image}
-          className="max-w-2xl max-h-80 mx-auto my-5"
-        />
+        <img src={destination.image} className="w-full my-5" />
         <div
+          id="qill-content"
           dangerouslySetInnerHTML={{ __html: destination.description }}
         ></div>
         {destination._id && <ReviewSession destinationId={destination._id} />}

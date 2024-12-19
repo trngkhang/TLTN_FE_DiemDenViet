@@ -62,7 +62,7 @@ export default function SelectCategory({ formData, setFormData }) {
       : "Chọn loại điểm đến";
 
   return (
-    <div>
+    <>
       <Button
         outline
         color="light"
@@ -117,6 +117,6 @@ export default function SelectCategory({ formData, setFormData }) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
