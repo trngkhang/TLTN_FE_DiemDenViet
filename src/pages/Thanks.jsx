@@ -1,4 +1,5 @@
 import { Button } from "flowbite-react";
+import envVar from "../utils/envVar";
 
 export default function Thanks() {
   return (
@@ -29,7 +30,7 @@ export default function Thanks() {
 
       {/* Button với hiệu ứng hover */}
       <Button
-        href=""
+        href={envVar.link_sourcecode}
         target="_blank"
         className="bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium px-6 py-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
       >
