@@ -50,17 +50,17 @@ export default function UpdateSubcategory({ item, onCLose }) {
   return (
     <>
       <Modal show={true} onClose={onCLose}>
-        <Modal.Header>Chỉnh sửa danh mục con</Modal.Header>
+        <Modal.Header>Chỉnh sửa danh mục phụ</Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="name" value="Tên danh mục con" />
+                <Label htmlFor="name" value="Tên danh mục phụ" />
               </div>
               <TextInput
                 id="name"
                 type="text"
-                placeholder="Nhập tên danh mục con"
+                placeholder="Nhập tên danh mục phụ"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })

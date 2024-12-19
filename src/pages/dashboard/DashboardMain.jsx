@@ -75,7 +75,7 @@ export default function DashboardMain() {
         </div>
         <div className="bg-white flex justify-between rounded-md shadow-md p-3 dark:bg-slate-800">
           <div>
-            <h1 className="text-gray-500 text-xl">Tổng số đánh giá</h1>
+            <h1 className="text-gray-500 text-xl">Tổng số nhận xét</h1>
             <p className="text-3xl p-2">{totalReviews}</p>
             <div className="flex py-1">
               <span className="flex items-center  text-green-500 pr-1">
@@ -154,7 +154,7 @@ export default function DashboardMain() {
         </div>
         <div className="bg-white shadow-md rounded-md lg:col-span-full">
           <div className="flex justify-between p-3 px-6 items-center font-semibold">
-            <h1>Đánh giá mới</h1>
+            <h1>nhận xét mới</h1>
             <Button outline gradientDuoTone="purpleToPink">
               <Link to={"/dashboard?tab=review"}>Xem tất cả</Link>
             </Button>
@@ -163,7 +163,7 @@ export default function DashboardMain() {
             <Table.Head>
               <Table.HeadCell>Id người dùng</Table.HeadCell>
               <Table.HeadCell>Sao</Table.HeadCell>
-              <Table.HeadCell>Đánh giá</Table.HeadCell>
+              <Table.HeadCell>nhận xét</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
               {reviews &&

@@ -16,7 +16,7 @@ export default function MyTrip() {
       const res = await TripService.gets(queryParams);
 
       if (res.status) {
-        setUserTrips(res.data.trips);
+        setUserTrips(res.data.data);
       }
     } catch (error) {
       console.log(error.message);

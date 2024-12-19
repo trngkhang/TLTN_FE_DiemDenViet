@@ -36,13 +36,13 @@ export default function DashReview() {
       setDeleteReviewId(null);
       fetchData();
     } catch (error) {
-      console.log("Lỗi khi xóa đánh giá:", error);
+      console.log("Lỗi khi xóa nhận xét:", error);
     }
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold py-4">Quản lý Đánh giá</h1>
+      <h1 className="text-2xl font-semibold py-4">Quản lý nhận xét</h1>
       <div className="flex justify-between items-center mb-4">
         <div></div>
       </div>

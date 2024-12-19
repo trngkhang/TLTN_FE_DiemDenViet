@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Dropdown } from "flowbite-react";
 import DestinationCard from "../../components/destination/DestinationCard";
 import SelectCategory from "../../components/destination/search-destination/SelectCategory";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import DestinationService from "../../services/DestinationService";
 import SelectAddress3 from "../../components/address/SelectAddress3";
@@ -14,7 +14,7 @@ export default function DestinationSearch() {
   const [destinations, setDestinations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 12; 
+  const itemsPerPage = 12;
   const [openModalCategory, setOpenModalCategory] = useState(false);
 
   const handleSearch = async () => {
@@ -23,8 +23,12 @@ export default function DestinationSearch() {
       ...(filter.provinceId && { provinceId: filter.provinceId }),
       ...(filter.districtId && { districtId: filter.districtId }),
       ...(filter.wardId && { wardId: filter.wardId }),
-      ...(filter?.category?.categoryId && { categoryId: filter.category.categoryId }),
-      ...(filter?.category?.subcategoryId && { subcategoryId: filter.category.subcategoryId }),
+      ...(filter?.category?.categoryId && {
+        categoryId: filter.category.categoryId,
+      }),
+      ...(filter?.category?.subcategoryId && {
+        subcategoryId: filter.category.subcategoryId,
+      }),
       ...(filter.sortBy && { sortBy: filter.sortBy }),
       page: currentPage,
       limit: itemsPerPage,
@@ -42,7 +46,7 @@ export default function DestinationSearch() {
 
   useEffect(() => {
     handleSearch();
-  }, [filter, currentPage]); 
+  }, [filter, currentPage]);
 
   return (
     <div className="bg-gray-100 w-full py-1">
@@ -109,7 +113,7 @@ export default function DestinationSearch() {
               <Dropdown.Item
                 onClick={() => setFilter({ ...filter, sortBy: "rating" })}
               >
-                Đánh giá
+                nhận xét
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => setFilter({ ...filter, sortBy: "views" })}

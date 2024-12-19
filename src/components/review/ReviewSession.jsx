@@ -52,7 +52,7 @@ export default function ReviewSession({ destinationId }) {
     e.preventDefault();
 
     if (!newReview.comment.trim() || newReview.comment.length > 500) {
-      setReviewError("Đánh giá phải ít hơn 500 kí tự.");
+      setReviewError("nhận xét phải ít hơn 500 kí tự.");
       return;
     }
 
@@ -76,11 +76,11 @@ export default function ReviewSession({ destinationId }) {
         ]);
         setTotalReviews((prevTotal) => prevTotal + 1);
       } else {
-        setReviewError(res.data.message || "Lỗi tạo đánh giá.");
+        setReviewError(res.data.message || "Lỗi tạo nhận xét.");
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      setReviewError("Có lỗi xảy ra khi gửi đánh giá.");
+      setReviewError("Có lỗi xảy ra khi gửi nhận xét.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +94,7 @@ export default function ReviewSession({ destinationId }) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h3 className="text-xl font-semibold text-center">Đánh giá</h3>
+      <h3 className="text-xl font-semibold text-center">nhận xét</h3>
 
       {user ? (
         <div>
@@ -125,7 +125,7 @@ export default function ReviewSession({ destinationId }) {
               onChange={(e) =>
                 setNewReview((prev) => ({ ...prev, comment: e.target.value }))
               }
-              placeholder="Viết đánh giá của bạn..."
+              placeholder="Viết nhận xét của bạn..."
               className="w-full rounded-md border-gray-400 text-sm"
             />
             <div className="flex justify-between items-center mt-2">
@@ -137,7 +137,7 @@ export default function ReviewSession({ destinationId }) {
                 type="submit"
                 disabled={!newReview.comment.trim() || isSubmitting}
               >
-                {isSubmitting ? "Đang gửi..." : "Đánh giá"}
+                {isSubmitting ? "Đang gửi..." : "nhận xét"}
               </Button>
             </div>
             {reviewError && (
@@ -149,7 +149,7 @@ export default function ReviewSession({ destinationId }) {
         </div>
       ) : (
         <p>
-          Đăng nhập để đánh giá. <Link to="/signin">Đăng nhập</Link>
+          Đăng nhập để nhận xét. <Link to="/signin">Đăng nhập</Link>
         </p>
       )}
 
@@ -157,7 +157,7 @@ export default function ReviewSession({ destinationId }) {
         <Accordion.Panel>
           <Accordion.Title>
             <div className="flex flex-row items-center">
-              <p>Lượt đánh giá</p>
+              <p>Lượt nhận xét</p>
               <div className="border border-gray-400 px-2 ml-1">
                 {totalReviews}
               </div>
@@ -165,7 +165,7 @@ export default function ReviewSession({ destinationId }) {
           </Accordion.Title>
           <Accordion.Content>
             {reviews.length === 0 ? (
-              <p>Chưa có đánh giá nào.</p>
+              <p>Chưa có nhận xét nào.</p>
             ) : (
               reviews.map((review, index) => (
                 <Review key={index} review={review} />
@@ -179,7 +179,7 @@ export default function ReviewSession({ destinationId }) {
                   disabled={loadingMore}
                   className="hover:text-blue-500"
                 >
-                  {loadingMore ? "Đang tải..." : "Hiện thêm đánh giá"}
+                  {loadingMore ? "Đang tải..." : "Hiện thêm nhận xét"}
                 </button>
               </div>
             )}

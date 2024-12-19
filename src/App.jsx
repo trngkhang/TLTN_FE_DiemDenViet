@@ -21,6 +21,7 @@ import CreateTrip from "./pages/trip/CreateTrip";
 import ViewTrip from "./pages/trip/ViewTrip";
 import MyTrip from "./pages/trip/MyTrip";
 import AuthService from "./services/AuthService";
+import Thanks from "./pages/Thanks";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ function App() {
             <Route path="/destination" element={<DestinationSearch />} />
             <Route path="/destination/:id" element={<DestinationDetail />} />
             <Route path="/trip/:tripId" element={<ViewTrip />} />
+            <Route path="/thanks" element={<Thanks />} />
 
             <Route element={<PrivateRoute />}>
               <Route path="/profile" element={<Profile />} />

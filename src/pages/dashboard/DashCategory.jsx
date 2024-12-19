@@ -42,7 +42,7 @@ export default function DashCategory() {
       console.log("Lỗi khi xóa danh mục:", error);
     }
   };
-
+console.log(deleteCategoryId)
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">Quản lý Danh mục chính</h1>
@@ -54,7 +54,7 @@ export default function DashCategory() {
         <Table>
           <Table.Head>
             <Table.HeadCell>Tên</Table.HeadCell>
-            <Table.HeadCell>Số danh mục con</Table.HeadCell>
+            <Table.HeadCell>Số danh mục phụ</Table.HeadCell>
             <Table.HeadCell>Số điển đến</Table.HeadCell>
             <Table.HeadCell>Trạng thái</Table.HeadCell>
             <Table.HeadCell>Tùy chọn</Table.HeadCell>

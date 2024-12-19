@@ -64,7 +64,7 @@ export default function DashSubcategory() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold py-4">Quản lý Danh mục con</h1>
+      <h1 className="text-2xl font-semibold py-4">Quản lý Danh mục phụ</h1>
       <div className="flex justify-between items-center mb-4">
         <select
           value={selectedCategory}

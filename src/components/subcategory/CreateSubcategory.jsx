@@ -47,19 +47,19 @@ export default function CreateSubcategory() {
 
   return (
     <>
-      <Button onClick={() => setOpenModal(true)}>Tạo mới danh mục con</Button>
+      <Button onClick={() => setOpenModal(true)}>Tạo mới danh mục phụ</Button>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>Tạo mới danh mục con</Modal.Header>
+        <Modal.Header>Tạo mới danh mục phụ</Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="name" value="Tên danh mục con" />
+                <Label htmlFor="name" value="Tên danh mục phụ" />
               </div>
               <TextInput
                 id="name"
                 type="text"
-                placeholder="Nhập tên danh mục con"
+                placeholder="Nhập tên danh mục phụ"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })

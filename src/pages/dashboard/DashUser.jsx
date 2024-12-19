@@ -10,7 +10,7 @@ export default function DashUser() {
   const [data, setData] = useState([]);
   const [updateUser, setUpdateUser] = useState("");
   const [deleteUserId, setDeleteUserId] = useState("");
-  const pageSize = 2;
+  const pageSize = 30;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [username, setUserName] = useState("");

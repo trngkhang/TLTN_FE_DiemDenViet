@@ -42,7 +42,7 @@ export default function Home() {
               địa điểm du lịch lý tưởng cho kỳ nghỉ sắp tới của bạn.
             </p>
             <div className="flex justify-center">
-              <Link href="/destination">
+              <Link to="/destination">
                 <button className="bg-gray-950 hover:bg-black text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:scale-105 transition-transform">
                   Tìm Hiểu Thêm
                 </button>

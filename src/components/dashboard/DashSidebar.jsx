@@ -66,7 +66,7 @@ export default function DashSidebar({ setSidebarOpen }) {
                 icon={MdCategory}
                 as="div"
               >
-                Danh mục con
+                Danh mục phụ
               </Sidebar.Item>
             </Link>
           </Sidebar.Collapse>
@@ -85,7 +85,7 @@ export default function DashSidebar({ setSidebarOpen }) {
               icon={BiSolidCommentDetail}
               as="div"
             >
-              Đánh giá
+              nhận xét
             </Sidebar.Item>
           </Link>
           <Link to="/dashboard?tab=user" onClick={handleLinkClick}>

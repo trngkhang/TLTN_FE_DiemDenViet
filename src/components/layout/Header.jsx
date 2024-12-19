@@ -8,7 +8,7 @@ import AuthService from "../../services/AuthService";
 import HeaderDrawer from "../common/HeaderDrawer";
 
 export default function Header() {
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false);  
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const path = useLocation().pathname;
   const dispatch = useDispatch();
@@ -97,7 +97,7 @@ export default function Header() {
           </Link>
           <Link to="/trip/create" className="text-lg font-semibold">
             <Navbar.Link active={path === "/generate-trip"} as="div">
-              AI tư vấn
+              Gợi ý lịch trình
             </Navbar.Link>
           </Link>
         </Navbar.Collapse>
