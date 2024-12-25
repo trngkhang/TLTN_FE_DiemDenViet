@@ -1,7 +1,7 @@
-import SelectAddress from "../../components/trip/create-trip/SelectAddress";
+import SelectAddress2 from "../../components/trip/create-trip/SelectAddress2";
 import { SelectBudgetOptions, SelectTravelesList } from "../../utils/contant";
 import { useState } from "react";
-import { Button, TextInput } from "flowbite-react";
+import { Button, Textarea, TextInput } from "flowbite-react";
 import NotificationModal from "../../components/common/NotificationModal";
 import { useSelector } from "react-redux";
 import { LoadingModal } from "../../components/common/LoadingModal";
@@ -26,8 +26,9 @@ export default function CreateTrip() {
       setFormData({ ...formData, noOfDay: newValue });
     }
   };
-  const GenerateTrip = async () => {
+  const GenerateTrip = async (type) => {
     setNotification("");
+    let res; // Khai báo biến res bên ngoài
     try {
       if (
         !formData ||
@@ -42,17 +43,38 @@ export default function CreateTrip() {
       setNotificationLoading(
         "Đang tạo chuyến đi. Vui loàng đợi trong giây lát."
       );
-      const res = await TripService.post({ ...formData, userId: user._id });
-
+      if (type === "byai") {
+        res = await TripService.postbyai({
+          location: formData.location,
+          noOfDay: formData.noOfDay,
+          traveler: formData.traveler,
+          budget: formData.budget,
+          ...(formData?.interest && { interest: formData?.interest }),
+          userId: user._id,
+        });
+      } else {
+        res = await TripService.postfromdb({
+          location: formData.location,
+          noOfDay: formData.noOfDay,
+          traveler: formData.traveler,
+          budget: formData.budget,
+          provinceId: formData.provinceId,
+          ...(formData?.districtId && { districtId: formData?.districtId }),
+          ...(formData?.interest && { interest: formData?.interest }),
+          userId: user._id,
+        });
+      }
       setNotificationLoading("");
       if (res.status) {
         setNavigateURL(`/trip/${res.data._id}`);
         setNotification(`Tạo thành công chuyến đi`);
-      }
-      if (!res.status) {
+      } else {
         setNotification(`Tạo chuyến đi thất bại`);
       }
-    } catch (error) {}
+    } catch (error) {
+      setNotificationLoading("");
+      setNotification(error.message);
+    }
   };
 
   return (
@@ -68,11 +90,10 @@ export default function CreateTrip() {
           của bạn.
         </p>
       </div>
-      <div className="mt-16 grid gap-6">
+      <div className="mt-16 grid gap-2">
         <div>
           <h2 className="text-xl my-3 font-medium">Bạn dự định đi đến đâu?</h2>
-
-          <SelectAddress data={formData} setData={setFormData} />
+          <SelectAddress2 data={formData} setData={setFormData} />
         </div>
         <div>
           <h2 className="text-xl my-3 font-medium">
@@ -132,10 +153,26 @@ export default function CreateTrip() {
             ))}
           </div>
         </div>
+        <div>
+          <h2 className="text-xl my-3 font-medium">
+            Sở thích du lịch của bạn là gì?
+          </h2>
+          <Textarea
+            maxLength={"100"}
+            onChange={(e) =>
+              setFormData({ ...formData, interest: e.target.value })
+            }
+          />
+        </div>
       </div>
-      <Button onClick={GenerateTrip} className="my-10 flex ml-auto">
-        Tạo chuyến đi
-      </Button>
+      <div className="py-10 flex justify-center gap-3">
+        <Button onClick={() => GenerateTrip("fromdb")} className="w-full">
+          Gợi ý tiêu chuẩn
+        </Button>
+        <Button onClick={() => GenerateTrip("byai")} className="w-full">
+          Gợi ý mở rộng
+        </Button>
+      </div>
       {notification && (
         <NotificationModal
           notification={notification}

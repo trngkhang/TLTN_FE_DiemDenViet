@@ -7,8 +7,11 @@ export default class TripService {
   static async gets(queryParams) {
     return HttpClient.get(`/trip?${queryParams}`);
   }
-  static async post(formData) {
-    return HttpClient.post("/trip", formData);
+  static async postbyai(formData) {
+    return HttpClient.post("/trip/byai", formData);
+  }
+  static async postfromdb(formData) {
+    return HttpClient.post("/trip/fromdb", formData);
   }
   static async delete(id) {
     return HttpClient.delete(`/trip/${id}`);

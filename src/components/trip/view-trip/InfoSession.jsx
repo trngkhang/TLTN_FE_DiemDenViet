@@ -29,6 +29,11 @@ export default function InfoSession({ selection }) {
           <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">
             🥂 {selection?.traveler}
           </h2>
+          {selection?.interest && (
+            <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">
+              ❤️ {selection?.interest}
+            </h2>
+          )}
         </div>
       </div>
     </div>

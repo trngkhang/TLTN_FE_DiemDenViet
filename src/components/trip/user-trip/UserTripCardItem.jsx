@@ -11,9 +11,9 @@ export default function UserTripCardItem({ trip }) {
         </h5>
         <p className="text-gray-700">
           Dành cho
-          <span className="font-semibold">{trip.selection.traveler}</span> kéo
+          <span className="font-semibold"> {trip.selection.traveler}</span> kéo
           dài
-          <span className="font-semibold">{trip.selection.noOfDay} ngày</span>
+          <span className="font-semibold"> {trip.selection.noOfDay} ngày </span>
           với chi phí
           <span className="font-semibold"> {trip.selection.budget}</span>.
         </p>

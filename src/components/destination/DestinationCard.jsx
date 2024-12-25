@@ -16,10 +16,10 @@ export default function DestinationCard({ destination }) {
           </h5>
 
           <p className="text-gray-500 text-xs mb-4">
-            {destination.address.provinceId?.name
-              ? destination.address.districtId?.name
-                ? `${destination.address.districtId.name}, ${destination.address.provinceId.name}`
-                : destination.address.provinceId.name
+            {destination.address?.provinceId?.name
+              ? destination.address?.districtId?.name
+                ? `${destination.address?.districtId.name}, ${destination.address.provinceId.name}`
+                : destination.address.provinceId?.name
               : "Địa chỉ đang cập nhật"}
           </p>
           <div className="flex items-center justify-between py-2 px-4 text-gray-600 text-sm border-t border-gray-200">

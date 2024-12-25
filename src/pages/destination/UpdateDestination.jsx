@@ -88,7 +88,7 @@ export default function UpdateDestination() {
   if (loading) {
     return <div>loading...</div>;
   }
-  console.log(formData);
+
   return (
     <div className="max-w-4xl mx-auto p-3">
       <h1 className=" text-4xl font-semibold text-center pt-2 pb-8">

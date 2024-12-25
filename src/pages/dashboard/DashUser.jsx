@@ -49,7 +49,7 @@ export default function DashUser() {
       console.log("Lỗi khi xóa danh mục:", error);
     }
   };
-  console.log(isAdmin);
+  
   return (
     <div>
       <h1 className="text-2xl font-semibold py-4">QUẢN LÝ TÀI KHOẢN</h1>
