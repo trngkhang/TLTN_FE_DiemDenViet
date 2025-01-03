@@ -138,7 +138,6 @@ export default function SignUp() {
             Đăng nhập
           </Link>
         </span>
-        <div>Tài khoản admin: quantrivien - 123456</div>
       </form>
     </div>
   );
